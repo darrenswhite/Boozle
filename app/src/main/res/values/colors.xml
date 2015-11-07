@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="dark_gray">#afafaf</color>
+    <color name="blue">#ff00a0ff</color>
+    <color name="blue_dark">#ff0074cd</color>
+    <color name="gray">#ffc8c8c8</color>
+    <color name="white">#ffffffff</color>
+
+    <color name="divider">@color/gray</color>
+    <color name="primary_background">@color/blue</color>
+    <color name="primary_background_dark">@color/blue_dark</color>
+    <color name="primary_text">@color/white</color>
+    <color name="secondary_background">@color/white</color>
+    <color name="secondary_text">@color/blue</color>
+    <color name="tertiary_text">@color/dark_gray</color>
+</resources>

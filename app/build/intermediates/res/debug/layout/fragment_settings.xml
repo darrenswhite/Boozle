@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+    <CheckBox
+        android:id="@+id/show_anims"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="showAnims"
+        android:text="@string/setting_show_anims"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:textStyle="bold"/>
+
+    <CheckBox
+        android:id="@+id/show_descs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/show_anims"
+        android:onClick="showDescs"
+        android:text="@string/setting_show_desc"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:textStyle="bold"/>
+
+    <CheckBox
+        android:id="@+id/show_players"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/show_descs"
+        android:onClick="showPlayers"
+        android:text="@string/setting_show_players"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:textStyle="bold"/>
+</RelativeLayout><!-- From: file:/F:/StudioProjects/Boozle/app/src/main/res/layout/fragment_settings.xml -->

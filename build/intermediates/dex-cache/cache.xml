@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="F:\StudioProjects\Boozle\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-ads\8.1.0\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="997773777cf3904c11d6764fe3b7668538220e49">
+        <dex dex="F:\StudioProjects\Boozle\app\build\intermediates\pre-dexed\debug\classes-bf22bb43e3a1ea18a492611d35eb8f48d189550c.jar" />
+    </item>
+    <item
+        jar="C:\android-sdk\extras\android\m2repository\com\android\support\support-annotations\22.2.0\support-annotations-22.2.0.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="66b42a1f3eb7676070b7ef7f14b603483aecbee1">
+        <dex dex="F:\StudioProjects\Boozle\app\build\intermediates\pre-dexed\debug\support-annotations-22.2.0-fb30a7997375d7d71a6f5136a714a9d27c3ce4b0.jar" />
+    </item>
+    <item
+        jar="F:\StudioProjects\Boozle\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-appindexing\8.1.0\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="4477ea44f5ec5ad064022a22691732d7638ff197">
+        <dex dex="F:\StudioProjects\Boozle\app\build\intermediates\pre-dexed\debug\classes-685d7c03167fb74170dcc7531d690517520f9618.jar" />
+    </item>
+    <item
+        jar="F:\StudioProjects\Boozle\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-basement\8.1.0\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="d0dda274b703dd9c5bb056867649d22b4171ae7d">
+        <dex dex="F:\StudioProjects\Boozle\app\build\intermediates\pre-dexed\debug\classes-a10e67680e4651f3b1d6e672f8913cc76bcbfc77.jar" />
+    </item>
+    <item
+        jar="F:\StudioProjects\Boozle\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\22.1.0\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="983e2f375504bc04def18e709c35192afe92e65f">
+        <dex dex="F:\StudioProjects\Boozle\app\build\intermediates\pre-dexed\debug\classes-6cfeb352ea813e3df562a82973ce56e40fabda40.jar" />
+    </item>
+    <item
+        jar="F:\StudioProjects\Boozle\app\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.0\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="1ee588ff2c4daf7b97c1cbf922a6c7f027285c2f">
+        <dex dex="F:\StudioProjects\Boozle\app\build\intermediates\pre-dexed\debug\classes-695e4fce973eb79899379107522327fc927237ab.jar" />
+    </item>
+    <item
+        jar="F:\StudioProjects\Boozle\app\build\intermediates\exploded-aar\com.android.support\support-v4\22.2.0\jars\libs\internal_impl-22.2.0.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="57f2ab85c164ff1676ec64dee787981c046fab79">
+        <dex dex="F:\StudioProjects\Boozle\app\build\intermediates\pre-dexed\debug\internal_impl-22.2.0-9efe83ffcf53f4a67b593bf8bedcc2908ea4bdde.jar" />
+    </item>
+    <item
+        jar="F:\StudioProjects\Boozle\app\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\22.1.0\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="80434c45861675a57d690fba5ca31c3d55c89489">
+        <dex dex="F:\StudioProjects\Boozle\app\build\intermediates\pre-dexed\debug\classes-e8007747f81ec654ee8e653fa448bfdf1dfac49d.jar" />
+    </item>
+    <item
+        jar="F:\StudioProjects\Boozle\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-analytics\8.1.0\jars\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="95758a2905669affbffc5ddd262921d375674fad">
+        <dex dex="F:\StudioProjects\Boozle\app\build\intermediates\pre-dexed\debug\classes-f032ac451433a229049078c2b126f5486b32f915.jar" />
+    </item>
+
+</items>
