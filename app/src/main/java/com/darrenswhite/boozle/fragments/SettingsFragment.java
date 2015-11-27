@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.NumberPicker;
 
 import com.darrenswhite.boozle.MainActivity;
 import com.darrenswhite.boozle.R;
@@ -38,10 +39,31 @@ public class SettingsFragment extends Fragment {
 		CheckBox showAnims = (CheckBox) v.findViewById(R.id.show_anims);
 		CheckBox showDescs = (CheckBox) v.findViewById(R.id.show_descs);
 		CheckBox showPlayers = (CheckBox) v.findViewById(R.id.show_players);
+		NumberPicker nextAction = (NumberPicker) v.findViewById(R.id.next_action_period);
+		int period = Integer.parseInt(Settings.getProperty(Settings.NEXT_ACTION_PERIOD));
+		final int increment = 10;
+		int min = 0, max = 60;
+		String[] values = new String[(max - min) / increment];
+
+		for (int i = 0; i < values.length; i++) {
+			values[i] = String.valueOf(min + i * increment);
+		}
 
 		showAnims.setChecked(Boolean.parseBoolean(Settings.getProperty(Settings.SHOW_ANIMATIONS)));
 		showDescs.setChecked(Boolean.parseBoolean(Settings.getProperty(Settings.SHOW_DESCRIPTIONS)));
 		showPlayers.setChecked(Boolean.parseBoolean(Settings.getProperty(Settings.SHOW_PLAYERS)));
+		nextAction.setDisplayedValues(values);
+		nextAction.setMinValue(0);
+		nextAction.setMaxValue(values.length - 1);
+		nextAction.setValue(period / increment);
+		nextAction.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+
+			@Override
+			public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+				Settings.setAndStore(getActivity(), Settings.NEXT_ACTION_PERIOD,
+						newVal * increment);
+			}
+		});
 
 		mTracker = ((MainActivity) getActivity()).getTracker();
 

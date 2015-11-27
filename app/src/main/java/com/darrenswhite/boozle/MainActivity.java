@@ -3,7 +3,7 @@ package com.darrenswhite.boozle;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.PersistableBundle;
+import android.os.CountDownTimer;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
@@ -57,13 +57,14 @@ public class MainActivity extends AppCompatActivity {
 	private RecyclerView.Adapter mAdapter;
 	private Fragment mContent;
 	private Tracker mTracker;
-
 	private CharSequence mTitle;
 	private String[] mTitles;
 	private String[] mFragTitles;
 	private int[] mIcons;
 
 	private Game game;
+	private CountDownTimer actionTimer;
+	private long actionTimerLeft = 0;
 
 	public synchronized Tracker getTracker() {
 		if (mTracker == null) {
@@ -78,11 +79,28 @@ public class MainActivity extends AppCompatActivity {
 		return mTracker;
 	}
 
-	private boolean isGameFragment() {
-		FragmentManager fragmentManager = getSupportFragmentManager();
+	private boolean isFragmentVisible(Fragment f) {
+		return isFragmentVisible(f.getClass());
+	}
 
-		for (int i = 1; i < mTitles.length; i++) {
-			Fragment f = fragmentManager.findFragmentByTag(mTitles[i]);
+	private boolean isFragmentVisible(Class<? extends Fragment> c) {
+		FragmentManager fm = getSupportFragmentManager();
+
+		for (int i = 1; i < mFragTitles.length; i++) {
+			Fragment f = fm.findFragmentByTag(mFragTitles[i]);
+			if (f != null && f.getClass().equals(c) && f.isVisible()) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private boolean isGameFragmentVisible() {
+		FragmentManager fm = getSupportFragmentManager();
+
+		for (int i = 1; i < mFragTitles.length; i++) {
+			Fragment f = fm.findFragmentByTag(mFragTitles[i]);
 			if (f != null && f.isVisible()) {
 				return false;
 			}
@@ -106,6 +124,12 @@ public class MainActivity extends AppCompatActivity {
 		final TextView actionDesc = (TextView) findViewById(R.id.action_desc);
 		final TextView player = (TextView) findViewById(R.id.player);
 		final Action next = game.next();
+
+		if (v != null) {
+			stopActionTimer();
+		}
+
+		startActionTimer(false);
 
 		Log.i(TAG, "Setting next action: " + next);
 		mTracker.setScreenName("Game");
@@ -261,7 +285,10 @@ public class MainActivity extends AppCompatActivity {
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 
-		getSupportFragmentManager().putFragment(outState, "mContent", mContent);
+		if (mContent != null) {
+			getSupportFragmentManager().putFragment(outState, "mContent", mContent);
+		}
+
 		outState.putSerializable("game", game);
 	}
 
@@ -291,6 +318,11 @@ public class MainActivity extends AppCompatActivity {
 				break;
 		}
 
+		if (isFragmentVisible(f)) {
+			mDrawer.closeDrawer(mDrawerView);
+			return;
+		}
+
 		if (f != null) {
 			FragmentManager fragmentManager = getSupportFragmentManager();
 			String title = mFragTitles[position];
@@ -300,10 +332,10 @@ public class MainActivity extends AppCompatActivity {
 			if (f.getClass().equals(GameFragment.class)) {
 				fragmentManager.popBackStackImmediate();
 				fragmentManager.beginTransaction().replace(R.id.content_frame, f, title).commit();
-			} else if (isGameFragment()) {
+			} else if (isGameFragmentVisible()) {
 				fragmentManager.beginTransaction().replace(R.id.content_frame, f, title).addToBackStack(title).commit();
 			} else {
-				fragmentManager.popBackStackImmediate();
+				fragmentManager.popBackStack();
 				fragmentManager.beginTransaction().replace(R.id.content_frame, f, title).addToBackStack(title).commit();
 			}
 
@@ -320,32 +352,58 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	public void showAnims(View v) {
-		Settings.setProperty(Settings.SHOW_ANIMATIONS, !Boolean.parseBoolean(Settings.getProperty(Settings.SHOW_ANIMATIONS)));
-
-		try {
-			Settings.store(this);
-		} catch (IOException e) {
-			Log.e(TAG, "Unable to store settings");
-		}
+		Settings.setAndStore(this, Settings.SHOW_ANIMATIONS,
+				!Boolean.parseBoolean(Settings.getProperty(Settings.SHOW_ANIMATIONS)));
 	}
 
 	public void showDescs(View v) {
-		Settings.setProperty(Settings.SHOW_DESCRIPTIONS, !Boolean.parseBoolean(Settings.getProperty(Settings.SHOW_DESCRIPTIONS)));
-
-		try {
-			Settings.store(this);
-		} catch (IOException e) {
-			Log.e(TAG, "Unable to change setting: showDescs");
-		}
+		Settings.setAndStore(this, Settings.SHOW_DESCRIPTIONS,
+				!Boolean.parseBoolean(Settings.getProperty(Settings.SHOW_DESCRIPTIONS)));
 	}
 
-	public void showPlayers(View view) {
-		Settings.setProperty(Settings.SHOW_PLAYERS, !Boolean.parseBoolean(Settings.getProperty(Settings.SHOW_PLAYERS)));
+	public void showPlayers(View v) {
+		Settings.setAndStore(this, Settings.SHOW_PLAYERS,
+				!Boolean.parseBoolean(Settings.getProperty(Settings.SHOW_PLAYERS)));
+	}
 
-		try {
-			Settings.store(this);
-		} catch (IOException e) {
-			Log.e(TAG, "Unable to change setting: showPlayers");
+	public void startActionTimer(boolean resume) {
+		if (game.getCurrent() == null) {
+			return;
+		}
+
+		long period = Integer.parseInt(Settings.getProperty(Settings.NEXT_ACTION_PERIOD)) * 1000;
+
+		if (period == 0) {
+			stopActionTimer();
+			return;
+		} else if (resume && actionTimerLeft > 0) {
+			period = actionTimerLeft;
+		}
+
+		actionTimer = new CountDownTimer(period, 50) {
+
+			@Override
+			public void onFinish() {
+				if (game.getCurrent() != null) {
+					nextAction(null);
+				}
+			}
+
+			@Override
+			public void onTick(long millisUntilFinished) {
+				actionTimerLeft = millisUntilFinished;
+
+				// TODO Display timer or something
+			}
+		};
+
+		actionTimer.start();
+	}
+
+	public void stopActionTimer() {
+		if (actionTimer != null) {
+			actionTimer.cancel();
+			actionTimer = null;
 		}
 	}
 }

@@ -1,36 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="5dp">
+<TableLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:divider="?android:attr/dividerHorizontal"
+    android:dividerPadding="1dp"
+    android:orientation="vertical"
+    android:padding="5dp"
+    android:paddingBottom="5dp"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp"
+    android:paddingTop="5dp"
+    android:showDividers="middle|end"
+    android:stretchColumns="*">
 
-    <CheckBox
-        android:id="@+id/show_anims"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="showAnims"
-        android:text="@string/setting_show_anims"
-        android:textAppearance="?android:textAppearanceMedium"
-        android:textStyle="bold"/>
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <CheckBox
-        android:id="@+id/show_descs"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/show_anims"
-        android:onClick="showDescs"
-        android:text="@string/setting_show_desc"
-        android:textAppearance="?android:textAppearanceMedium"
-        android:textStyle="bold"/>
+        <CheckBox
+            android:id="@+id/show_anims"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="showAnims"
+            android:text="@string/setting_show_anims"/>
+    </TableRow>
 
-    <CheckBox
-        android:id="@+id/show_players"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/show_descs"
-        android:onClick="showPlayers"
-        android:text="@string/setting_show_players"
-        android:textAppearance="?android:textAppearanceMedium"
-        android:textStyle="bold"/>
-</RelativeLayout><!-- From: file:/F:/StudioProjects/Boozle/app/src/main/res/layout/fragment_settings.xml -->
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <CheckBox
+            android:id="@+id/show_players"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:onClick="showPlayers"
+            android:text="@string/setting_show_players"/>
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <CheckBox
+            android:id="@+id/show_descs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:onClick="showDescs"
+            android:text="@string/setting_show_desc"/>
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:baselineAligned="false"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/next_action_period_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:text="@string/next_action_period"/>
+
+        <NumberPicker
+            android:id="@+id/next_action_period"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="1"/>
+    </TableRow>
+</TableLayout><!-- From: file:/F:/StudioProjects/Boozle/app/src/main/res/layout/fragment_settings.xml -->

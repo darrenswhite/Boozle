@@ -1,6 +1,7 @@
 package com.darrenswhite.boozle;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,10 +17,12 @@ public class Settings {
 	public static final String SHOW_ANIMATIONS = "show_anims";
 	public static final String SHOW_DESCRIPTIONS = "show_descs";
 	public static final String SHOW_PLAYERS = "show_players";
+	public static final String NEXT_ACTION_PERIOD = "next_action_period";
+	private static final String TAG = "Settings";
 	private static final Properties prop = new Properties();
 
 	public static String getProperty(String key) {
-		return (String) prop.get(key);
+		return prop.getProperty(key);
 	}
 
 	private static File getSettingsFile(Context c) {
@@ -35,7 +38,17 @@ public class Settings {
 			setProperty(SHOW_ANIMATIONS, true);
 			setProperty(SHOW_DESCRIPTIONS, true);
 			setProperty(SHOW_PLAYERS, true);
+			setProperty(NEXT_ACTION_PERIOD, 10);
 			prop.store(new FileOutputStream(f), null);
+		}
+	}
+
+	public static void setAndStore(Context c, String key, Object value) {
+		try {
+			setProperty(key, value);
+			store(c);
+		} catch (IOException ex) {
+			Log.e(TAG, "Unable to set and store setting: " + key);
 		}
 	}
 

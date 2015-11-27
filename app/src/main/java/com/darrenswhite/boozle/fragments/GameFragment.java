@@ -61,7 +61,9 @@ public class GameFragment extends Fragment {
 			}
 		}
 
-		mTracker = ((MainActivity) getActivity()).getTracker();
+		MainActivity activity = (MainActivity) getActivity();
+
+		mTracker = activity.getTracker();
 
 		String name = "Game";
 		Log.i(TAG, "Setting screen name: " + name);
@@ -69,5 +71,23 @@ public class GameFragment extends Fragment {
 		mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
 		return v;
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		((MainActivity) getActivity()).stopActionTimer();
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		((MainActivity) getActivity()).startActionTimer(true);
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		((MainActivity) getActivity()).stopActionTimer();
 	}
 }

@@ -5,21 +5,8 @@
                 android:layout_height="fill_parent"
                 android:clickable="true"
                 android:onClick="nextAction"
-                android:orientation="vertical">
-
-    <ImageView
-        android:id="@+id/main_bg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:adjustViewBounds="false"
-        android:alpha="1"
-        android:contentDescription="@string/main_bg_desc"
-        android:scaleType="center"
-        android:src="@drawable/bg"
-        android:tint="#7d7d7d"
-        android:tintMode="multiply"/>
+                android:orientation="vertical"
+                android:background="@color/white">
 
     <TextView
         android:id="@+id/player"

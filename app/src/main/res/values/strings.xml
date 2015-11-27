@@ -20,7 +20,7 @@
     <string name="menu_delete">Delete</string>
     <string name="menu_title">Select Action</string>
     <string name="no_actions">No available actions!</string>
-    <string name="main_bg_desc">Default background</string>
+    <string name="next_action_period">Next action timer period</string>
 
     <string-array name="fragment_titles">
         <item>@string/app_phrase</item>
