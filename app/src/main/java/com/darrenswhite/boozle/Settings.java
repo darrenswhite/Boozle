@@ -26,7 +26,7 @@ public class Settings {
 	}
 
 	private static File getSettingsFile(Context c) {
-		return new File(c.getDir("partytime", Context.MODE_PRIVATE), "settings.dat");
+		return new File(c.getDir("boozle", Context.MODE_PRIVATE), "settings.dat");
 	}
 
 	public static void load(Context c) throws IOException {
@@ -36,9 +36,9 @@ public class Settings {
 			prop.load(new FileInputStream(f));
 		} else {
 			setProperty(SHOW_ANIMATIONS, true);
-			setProperty(SHOW_DESCRIPTIONS, true);
+			setProperty(SHOW_DESCRIPTIONS, false);
 			setProperty(SHOW_PLAYERS, true);
-			setProperty(NEXT_ACTION_PERIOD, 10);
+			setProperty(NEXT_ACTION_PERIOD, 30);
 			prop.store(new FileOutputStream(f), null);
 		}
 	}

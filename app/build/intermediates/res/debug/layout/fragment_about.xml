@@ -13,4 +13,4 @@
         android:text="@string/about_text"
         android:textAppearance="?android:textAppearanceLarge"
         android:textColor="@color/tertiary_text"/>
-</ScrollView><!-- From: file:/F:/StudioProjects/Boozle/app/src/main/res/layout/fragment_about.xml -->
+</ScrollView><!-- From: file:/D:/Users/Darren/StudioProjects/Boozle/app/src/main/res/layout/fragment_about.xml -->

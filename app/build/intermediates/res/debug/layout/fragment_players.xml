@@ -25,4 +25,4 @@
         android:onClick="newPlayer"
         android:text="@string/add_player"
         android:textColor="@color/primary_text"/>
-</RelativeLayout><!-- From: file:/F:/StudioProjects/Boozle/app/src/main/res/layout/fragment_players.xml -->
+</RelativeLayout><!-- From: file:/D:/Users/Darren/StudioProjects/Boozle/app/src/main/res/layout/fragment_players.xml -->

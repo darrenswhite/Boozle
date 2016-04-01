@@ -1,5 +1,6 @@
 package com.darrenswhite.boozle;
 
+import android.animation.ObjectAnimator;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -16,22 +17,18 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
-
 import com.darrenswhite.boozle.adapter.DrawerAdapter;
 import com.darrenswhite.boozle.animation.Animations;
 import com.darrenswhite.boozle.dialog.ActionDialog;
 import com.darrenswhite.boozle.dialog.PlayerDialog;
-import com.darrenswhite.boozle.fragments.AboutFragment;
-import com.darrenswhite.boozle.fragments.CustomFragment;
-import com.darrenswhite.boozle.fragments.GameFragment;
-import com.darrenswhite.boozle.fragments.ModesFragment;
-import com.darrenswhite.boozle.fragments.PlayersFragment;
-import com.darrenswhite.boozle.fragments.SettingsFragment;
+import com.darrenswhite.boozle.fragments.*;
 import com.darrenswhite.boozle.game.Action;
 import com.darrenswhite.boozle.game.Game;
 import com.darrenswhite.boozle.util.ActionFunctionThread;
 import com.darrenswhite.boozle.util.DividerItemDecoration;
+import com.darrenswhite.boozle.util.ProgressBar;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -63,8 +60,10 @@ public class MainActivity extends AppCompatActivity {
 	private int[] mIcons;
 
 	private Game game;
+
 	private CountDownTimer actionTimer;
 	private long actionTimerLeft = 0;
+	private float lastProgress = 100;
 
 	public synchronized Tracker getTracker() {
 		if (mTracker == null) {
@@ -371,13 +370,24 @@ public class MainActivity extends AppCompatActivity {
 			return;
 		}
 
-		long period = Integer.parseInt(Settings.getProperty(Settings.NEXT_ACTION_PERIOD)) * 1000;
+		final long period;
+		long defaultPeriod = Integer.parseInt(Settings.getProperty(Settings.NEXT_ACTION_PERIOD)) * 1000;
 
-		if (period == 0) {
+		if (defaultPeriod == 0) {
 			stopActionTimer();
 			return;
 		} else if (resume && actionTimerLeft > 0) {
 			period = actionTimerLeft;
+		} else {
+			period = defaultPeriod;
+		}
+
+		ProgressBar pb = (ProgressBar) findViewById(R.id.progress);
+
+		if (resume && lastProgress > 0f) {
+			pb.setProgress(lastProgress);
+		} else {
+			pb.setProgress(95f);
 		}
 
 		actionTimer = new CountDownTimer(period, 50) {
@@ -387,17 +397,23 @@ public class MainActivity extends AppCompatActivity {
 				if (game.getCurrent() != null) {
 					nextAction(null);
 				}
+
+				lastProgress = 100f;
 			}
 
 			@Override
 			public void onTick(long millisUntilFinished) {
 				actionTimerLeft = millisUntilFinished;
-
-				// TODO Display timer or something
+				lastProgress = (float) millisUntilFinished / (float) period * 100f;
 			}
 		};
 
 		actionTimer.start();
+
+		ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(pb, "progress", 0f);
+		objectAnimator.setDuration(period);
+		objectAnimator.setInterpolator(new DecelerateInterpolator());
+		objectAnimator.start();
 	}
 
 	public void stopActionTimer() {

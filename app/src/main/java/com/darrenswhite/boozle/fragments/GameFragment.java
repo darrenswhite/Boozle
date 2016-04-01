@@ -1,5 +1,6 @@
 package com.darrenswhite.boozle.fragments;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -8,12 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.darrenswhite.boozle.MainActivity;
 import com.darrenswhite.boozle.R;
 import com.darrenswhite.boozle.Settings;
 import com.darrenswhite.boozle.game.Action;
 import com.darrenswhite.boozle.game.Game;
+import com.darrenswhite.boozle.util.ProgressBar;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -47,7 +48,12 @@ public class GameFragment extends Fragment {
 		TextView action = (TextView) v.findViewById(R.id.action_title);
 		TextView actionDesc = (TextView) v.findViewById(R.id.action_desc);
 		TextView player = (TextView) v.findViewById(R.id.player);
+		ProgressBar pb = (ProgressBar) v.findViewById(R.id.progress);
 		Action current = getGame().getCurrent();
+
+		pb.setProgress(95f);
+		pb.setBackgroundColor(Color.argb(0, 0, 0, 0));
+		pb.setForegroundColor(Color.argb(150, 255, 215, 0));
 
 		if (current != null) {
 			action.setText(current.getCurrentText());

@@ -34,4 +34,4 @@
         android:layout_toStartOf="@+id/weight_picker"
         android:labelFor="@+id/action"
         android:textColor="@color/tertiary_text"/>
-</RelativeLayout><!-- From: file:/F:/StudioProjects/Boozle/app/src/main/res/layout/custom_item_row.xml -->
+</RelativeLayout><!-- From: file:/D:/Users/Darren/StudioProjects/Boozle/app/src/main/res/layout/custom_item_row.xml -->
