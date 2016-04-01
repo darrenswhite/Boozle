@@ -2716,9 +2716,9 @@ containing a value of this type.
         public static final int Base_Widget_AppCompat_TextView_SpinnerItem=0x7f0a0073;
         public static final int Base_Widget_AppCompat_Toolbar=0x7f0a00ad;
         public static final int Base_Widget_AppCompat_Toolbar_Button_Navigation=0x7f0a0074;
-        public static final int BoozleActionBar=0x7f0a00ae;
-        public static final int BoozleCheckBox=0x7f0a00af;
-        public static final int BoozleListView=0x7f0a00b0;
+        public static final int BoozleCheckBox=0x7f0a00ae;
+        public static final int BoozleListView=0x7f0a00af;
+        public static final int BoozleNumberPicker=0x7f0a00b0;
         public static final int BoozleTextView=0x7f0a00b1;
         public static final int BoozleTheme=0x7f0a00b2;
         public static final int Platform_AppCompat=0x7f0a0010;

@@ -25,7 +25,8 @@
             android:padding="5sp"
             android:textAppearance="?android:textAppearanceMedium"
             android:textColor="@color/tertiary_text"
-            android:textStyle="bold"/>
+            android:textSize="22sp"
+            android:textStyle="normal"/>
 
     <TextView
             android:id="@+id/action_title"
@@ -37,7 +38,8 @@
             android:padding="5sp"
             android:text="@string/begin_text"
             android:textColor="@color/secondary_text"
-            android:textSize="72sp"/>
+            android:textSize="72sp"
+            android:fontFamily="sans-serif-thin"/>
 
     <TextView
             android:id="@+id/action_desc"
@@ -49,6 +51,8 @@
             android:onClick="nextAction"
             android:padding="5sp"
             android:textAppearance="?android:textAppearanceMedium"
-            android:textColor="@color/tertiary_text"/>
+            android:textColor="@color/tertiary_text"
+            android:textSize="22sp"
+            android:textStyle="normal"/>
 
 </RelativeLayout>

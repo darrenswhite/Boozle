@@ -53,7 +53,7 @@ public class GameFragment extends Fragment {
 
 		pb.setProgress(95f);
 		pb.setBackgroundColor(Color.argb(0, 0, 0, 0));
-		pb.setForegroundColor(Color.argb(150, 255, 215, 0));
+		pb.setForegroundColor(Color.argb(200, 255, 215, 0));
 
 		if (current != null) {
 			action.setText(current.getCurrentText());
