@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.NumberPicker;
-
 import com.darrenswhite.boozle.MainActivity;
 import com.darrenswhite.boozle.R;
 import com.darrenswhite.boozle.Settings;
@@ -36,8 +35,8 @@ public class SettingsFragment extends Fragment {
 		View v = inflater.inflate(R.layout.fragment_settings, container, false);
 		Activity a = getActivity();
 
-		CheckBox showAnims = (CheckBox) v.findViewById(R.id.show_anims);
-		CheckBox showDescs = (CheckBox) v.findViewById(R.id.show_descs);
+		CheckBox showAnims = (CheckBox) v.findViewById(R.id.show_animations);
+		CheckBox showDescs = (CheckBox) v.findViewById(R.id.show_descriptions);
 		CheckBox showPlayers = (CheckBox) v.findViewById(R.id.show_players);
 		NumberPicker nextAction = (NumberPicker) v.findViewById(R.id.next_action_period);
 		int period = Integer.parseInt(Settings.getProperty(Settings.NEXT_ACTION_PERIOD));

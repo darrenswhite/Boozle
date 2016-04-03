@@ -2,7 +2,6 @@ package com.darrenswhite.boozle.util;
 
 import android.util.Log;
 import android.widget.TextView;
-
 import com.darrenswhite.boozle.game.Action;
 
 import java.util.Random;

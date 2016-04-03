@@ -14,10 +14,12 @@ import java.util.Properties;
  */
 public class Settings {
 
+	public static final String ENABLE_SOUND_EFFECTS = "enable_sound_effects";
+	public static final String NEXT_ACTION_PERIOD = "next_action_period";
 	public static final String SHOW_ANIMATIONS = "show_anims";
 	public static final String SHOW_DESCRIPTIONS = "show_descs";
 	public static final String SHOW_PLAYERS = "show_players";
-	public static final String NEXT_ACTION_PERIOD = "next_action_period";
+
 	private static final String TAG = "Settings";
 	private static final Properties prop = new Properties();
 
@@ -35,10 +37,11 @@ public class Settings {
 		if (f.exists()) {
 			prop.load(new FileInputStream(f));
 		} else {
+			setProperty(ENABLE_SOUND_EFFECTS, true);
+			setProperty(NEXT_ACTION_PERIOD, 30);
 			setProperty(SHOW_ANIMATIONS, true);
 			setProperty(SHOW_DESCRIPTIONS, false);
 			setProperty(SHOW_PLAYERS, true);
-			setProperty(NEXT_ACTION_PERIOD, 30);
 			prop.store(new FileOutputStream(f), null);
 		}
 	}

@@ -3,6 +3,7 @@ package com.darrenswhite.boozle;
 import android.animation.ObjectAnimator;
 import android.app.DialogFragment;
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v4.app.Fragment;
@@ -64,6 +65,13 @@ public class MainActivity extends AppCompatActivity {
 	private CountDownTimer actionTimer;
 	private long actionTimerLeft = 0;
 	private float lastProgress = 100;
+
+	private MediaPlayer blop;
+
+	public void enableSoundEffects(View v) {
+		Settings.setAndStore(this, Settings.ENABLE_SOUND_EFFECTS,
+				!Boolean.parseBoolean(Settings.getProperty(Settings.ENABLE_SOUND_EFFECTS)));
+	}
 
 	public synchronized Tracker getTracker() {
 		if (mTracker == null) {
@@ -165,6 +173,10 @@ public class MainActivity extends AppCompatActivity {
 
 					@Override
 					public void run() {
+						if (Boolean.parseBoolean(Settings.getProperty(Settings.ENABLE_SOUND_EFFECTS))) {
+							blop.start();
+						}
+
 						new Thread(new ActionFunctionThread(action, next)).start();
 					}
 				});
@@ -227,12 +239,14 @@ public class MainActivity extends AppCompatActivity {
 		mFragTitles = getResources().getStringArray(R.array.fragment_titles);
 		mAdapter = new DrawerAdapter(this, mTitles, mIcons);
 
-		mDrawer.setDrawerListener(mDrawerToggle);
+		mDrawer.addDrawerListener(mDrawerToggle);
 		mDrawerToggle.syncState();
 		mDrawerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
 		mDrawerView.setAdapter(mAdapter);
 		mDrawerView.setHasFixedSize(true);
 		mDrawerView.setLayoutManager(mLayoutManager);
+
+		blop = MediaPlayer.create(getApplicationContext(), R.raw.blop);
 
 		Animations.init(this);
 
@@ -350,12 +364,12 @@ public class MainActivity extends AppCompatActivity {
 		mTitle = title;
 	}
 
-	public void showAnims(View v) {
+	public void showAnimations(View v) {
 		Settings.setAndStore(this, Settings.SHOW_ANIMATIONS,
 				!Boolean.parseBoolean(Settings.getProperty(Settings.SHOW_ANIMATIONS)));
 	}
 
-	public void showDescs(View v) {
+	public void showDescriptions(View v) {
 		Settings.setAndStore(this, Settings.SHOW_DESCRIPTIONS,
 				!Boolean.parseBoolean(Settings.getProperty(Settings.SHOW_DESCRIPTIONS)));
 	}

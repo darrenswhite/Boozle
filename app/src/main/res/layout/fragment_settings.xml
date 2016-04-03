@@ -19,11 +19,12 @@
             android:layout_height="match_parent">
 
         <CheckBox
-                android:id="@+id/show_anims"
+                android:id="@+id/enable_sound_effects"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="showAnims"
-                android:text="@string/setting_show_anims"
+                android:layout_column="0"
+                android:onClick="enableSoundEffects"
+                android:text="@string/setting_enable_sound_effects"
                 android:textAppearance="?android:textAppearanceMedium"
                 android:textColor="@color/tertiary_text"
                 android:textStyle="normal"/>
@@ -34,6 +35,21 @@
             android:layout_height="match_parent">
 
         <CheckBox
+                android:id="@+id/show_animations"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="showAnimations"
+                android:text="@string/setting_show_animations"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="@color/tertiary_text"
+                android:textStyle="normal"/>
+    </TableRow>
+
+        <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <CheckBox
                 android:id="@+id/show_players"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -50,12 +66,12 @@
             android:layout_height="match_parent">
 
         <CheckBox
-                android:id="@+id/show_descs"
+                android:id="@+id/show_descriptions"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_column="0"
-                android:onClick="showDescs"
-                android:text="@string/setting_show_desc"
+                android:onClick="showDescriptions"
+                android:text="@string/setting_show_descriptions"
                 android:textAppearance="?android:textAppearanceMedium"
                 android:textColor="@color/tertiary_text"
                 android:textStyle="normal"/>
