@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,8 +53,8 @@ public class GameFragment extends Fragment {
 		Action current = getGame().getCurrent();
 
 		pb.setProgress(95f);
-		pb.setBackgroundColor(Color.argb(0, 0, 0, 0));
 		pb.setForegroundColor(Color.argb(200, 255, 215, 0));
+		pb.setParticleColor(ContextCompat.getColor(getContext(), R.color.secondary_background));
 
 		if (current != null) {
 			action.setText(current.getCurrentText());

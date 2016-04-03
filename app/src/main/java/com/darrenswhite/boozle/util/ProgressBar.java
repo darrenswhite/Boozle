@@ -7,6 +7,8 @@ import android.graphics.Path;
 import android.util.AttributeSet;
 import android.view.View;
 
+import java.util.Random;
+
 /**
  * @author Darren White
  */
@@ -14,22 +16,61 @@ public class ProgressBar extends View {
 
 	private static final float WAVE_FREQEUENCY = 1.5f;
 	private static final float WAVE_PHASE_SHIFT = -0.15f;
-	private static final float WAVE_DENSITY = 5.0f;
+	private static final float WAVE_DENSITY = 10f;
+
+	private static final Random rnd = new Random();
 
 	private final Path wavePath = new Path();
-	private float wavePhase;
+	private Particle[] particles;
 
+	private float wavePhase;
 	private float progress;
 
-	private int bg;
-	private int fg;
+	private int foreground;
+	private int particle;
 
-	private Paint bgPaint;
-	private Paint fgPaint;
+	private Paint foregroundPaint;
+	private Paint particlePaint;
 
 	public ProgressBar(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		init(context, attrs);
+
+		foregroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+		foregroundPaint.setColor(foreground);
+		foregroundPaint.setStyle(Paint.Style.FILL);
+
+		particlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+		particlePaint.setColor(particle);
+		particlePaint.setStyle(Paint.Style.FILL);
+	}
+
+	private void drawParticles(Canvas canvas, float height) {
+		if (particles == null) {
+			particles = new Particle[canvas.getWidth() * canvas.getHeight() / 10000];
+
+			for (int i = 0; i < particles.length; i++) {
+				Particle p = new Particle();
+
+				p.x = canvas.getWidth() * rnd.nextFloat();
+				p.y = canvas.getHeight() * rnd.nextFloat();
+				p.gravity = -(rnd.nextFloat() * 9.8f);
+				p.radius = rnd.nextInt(3);
+
+				particles[i] = p;
+			}
+		}
+
+		for (Particle p : particles) {
+			p.draw(canvas);
+			p.tick();
+
+			if (p.getY() < 0) {
+				p.x = canvas.getWidth() * rnd.nextFloat();
+				p.y = canvas.getHeight() - (height > canvas.getHeight() - 20 ? 0 : rnd.nextInt(20));
+				p.gravity = -(rnd.nextFloat() * 9.8f);
+				p.radius = rnd.nextInt(3);
+			}
+		}
 	}
 
 	private void drawWave(Canvas canvas, float height) {
@@ -47,42 +88,31 @@ public class ProgressBar extends View {
 			wavePath.lineTo(x, y);
 		}
 
-		canvas.drawPath(wavePath, fgPaint);
+		canvas.drawPath(wavePath, foregroundPaint);
 		wavePath.reset();
 		wavePhase += WAVE_PHASE_SHIFT;
 	}
 
-	public int getBackgroundColor() {
-		return bg;
+	public int getForegroundColor() {
+		return foreground;
 	}
 
-	public int getForegroundColor() {
-		return fg;
+	public int getParticleColor() {
+		return particle;
 	}
 
 	public float getProgress() {
 		return progress;
 	}
 
-	private void init(Context context, AttributeSet attrs) {
-		bgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-		bgPaint.setColor(bg);
-		bgPaint.setStyle(Paint.Style.FILL);
-
-		fgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-		fgPaint.setColor(fg);
-		fgPaint.setStyle(Paint.Style.FILL);
-	}
-
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 
-		canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), bgPaint);
-
 		float height = canvas.getHeight() * (1f - progress / 100f);
 
 		drawWave(canvas, height);
+		drawParticles(canvas, height);
 
 		invalidate();
 	}
@@ -96,16 +126,16 @@ public class ProgressBar extends View {
 		setMeasuredDimension(min, min);
 	}
 
-	public void setBackgroundColor(int color) {
-		bg = color;
-		bgPaint.setColor(color);
+	public void setForegroundColor(int color) {
+		foreground = color;
+		foregroundPaint.setColor(color);
 		invalidate();
 		requestLayout();
 	}
 
-	public void setForegroundColor(int color) {
-		fg = color;
-		fgPaint.setColor(color);
+	public void setParticleColor(int color) {
+		particle = color;
+		particlePaint.setColor(color);
 		invalidate();
 		requestLayout();
 	}
@@ -114,23 +144,27 @@ public class ProgressBar extends View {
 		this.progress = progress;
 		invalidate();
 	}
+
+	private class Particle {
+
+		private float gravity;
+		private int radius;
+		private float x, y;
+
+		private void draw(Canvas canvas) {
+			canvas.drawCircle(x, y, radius, particlePaint);
+		}
+
+		private float getX() {
+			return x;
+		}
+
+		private float getY() {
+			return y;
+		}
+
+		private void tick() {
+			y += gravity;
+		}
+	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

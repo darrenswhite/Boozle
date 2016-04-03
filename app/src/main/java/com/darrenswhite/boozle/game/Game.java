@@ -1,18 +1,10 @@
 package com.darrenswhite.boozle.game;
 
 import android.content.Context;
-
 import com.darrenswhite.boozle.util.FixedQueue;
 import com.darrenswhite.boozle.util.Function;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -205,7 +197,7 @@ public class Game implements Serializable {
 	}
 
 	public void saveCustom(Context c) throws IOException {
-		save(new FileOutputStream(new File(c.getDir("partytime", Context.MODE_PRIVATE), "custom.dat")));
+		save(new FileOutputStream(new File(c.getDir("boozle", Context.MODE_PRIVATE), "custom.dat")));
 	}
 
 	public void setEnabled(Action a, boolean enabled) {

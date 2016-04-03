@@ -243,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
 		}
 
 		try {
-			File dir = getDir("partytime", Context.MODE_PRIVATE);
+			File dir = getDir("boozle", Context.MODE_PRIVATE);
 			File custom = new File(dir, "custom.dat");
 			InputStream in;
 
