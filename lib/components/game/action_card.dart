@@ -19,8 +19,28 @@ class ActionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color playerColor = player != null ? player.color : null;
+    return MediaQuery.of(context).orientation == Orientation.landscape
+        ? buildLandscape(context)
+        : buildPortrait(context);
+  }
+
+  Widget buildLandscape(BuildContext context) {
+    return new Text('TODO');
+  }
+
+  buildPortrait(BuildContext context) {
+    Color playerColor =
+        player != null && action.affectsPlayer ? player.color : null;
     List<Widget> widgets = [];
+
+    if (action.image != null) {
+      widgets.add(
+        new Image.asset(
+          action.image,
+          fit: BoxFit.cover,
+        ),
+      );
+    }
 
     widgets.add(new ListTile(
       title: new Text(action.name,
@@ -33,7 +53,7 @@ class ActionCard extends StatelessWidget {
 
     widgets.add(new Divider());
 
-    if (player != null) {
+    if (player != null && action.affectsPlayer) {
       widgets.add(new ListTile(
         title: new Text(player.name,
             style: new TextStyle(fontWeight: FontWeight.w500)),

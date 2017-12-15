@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:boozle/components/game/action.dart';
 
 class Application {
@@ -7,12 +5,23 @@ class Application {
 
   static const List<Action> ACTION_MODELS = const [
     const Action(
-      name: 'Some action',
-      description: 'Some description',
+      name: 'Action A',
+      description: 'This is a normal action',
     ),
     const Action(
-      name: 'Another action',
-      description: 'Another description',
-    )
+      name: 'Action B',
+      description: 'This action doesn\'t affect any player',
+      affectsPlayer: false,
+    ),
+    const Action(
+      name: 'Action C',
+      description: 'This action has an image',
+      image: 'images/lake.jpg',
+    ),
+    const Action(
+      name: 'Action D',
+      description: 'This action has an animated image',
+      image: 'images/dab.webp',
+    ),
   ];
 }
