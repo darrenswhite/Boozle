@@ -10,7 +10,7 @@ class PlayerList extends ListBase<Player> {
   final List<Player> players = [
     new Player('Adam', Colors.yellow),
     new Player('Daniel', Colors.blue),
-    new Player('Darren', Colors.white),
+    new Player('Darren', Colors.orange),
   ];
 
   AnimatedListState get animatedList => listKey.currentState;

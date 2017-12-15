@@ -19,40 +19,11 @@ class ActionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget actionWidget = buildAction(context);
-    bool landscape =
-        MediaQuery.of(context).orientation == Orientation.landscape;
-
-    if (action.image != null) {
-      return new Stack(
-        children: <Widget>[
-          new DecoratedBox(
-            decoration: new BoxDecoration(
-              image: new DecorationImage(
-                  image: new AssetImage(action.image), fit: BoxFit.cover),
-            ),
-            child: new Container(),
-          ),
-          new Column(
-            mainAxisAlignment:
-                landscape ? MainAxisAlignment.end : MainAxisAlignment.center,
-            children: <Widget>[
-              new Card(
-                color: Theme.of(context).primaryColor.withAlpha(100),
-                child: actionWidget,
-              ),
-            ],
-          ),
-        ],
-      );
-    }
-
-    return new Card(child: actionWidget);
-  }
-
-  Widget buildAction(BuildContext context) {
     Color playerColor =
         player != null && action.affectsPlayer ? player.color : null;
+    Color cardColor = action.image != null
+        ? Theme.of(context).primaryColor.withOpacity(0.75)
+        : null;
     List<Widget> columnWidgets = [];
 
     columnWidgets.add(new ListTile(
@@ -85,10 +56,13 @@ class ActionCard extends StatelessWidget {
       ),
     ));
 
-    return new Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.min,
-      children: columnWidgets,
+    return new Card(
+      child: new Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: columnWidgets,
+      ),
+      color: cardColor,
     );
   }
 

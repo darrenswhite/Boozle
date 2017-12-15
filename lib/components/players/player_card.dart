@@ -1,6 +1,7 @@
 import 'package:boozle/components/players/player.dart';
 import 'package:boozle/components/players/player_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_color_picker/flutter_color_picker.dart';
 
 class PlayerCard extends StatefulWidget {
   final PlayerList players;
@@ -21,9 +22,12 @@ class PlayerCardState extends State<PlayerCard> {
   Widget build(BuildContext context) {
     return new Card(
       child: new ListTile(
-        leading: new Icon(
-          Icons.person,
-          color: widget.player.color,
+        leading: new IconButton(
+          icon: new Icon(
+            Icons.person,
+            color: widget.player.color,
+          ),
+          onPressed: updateColor,
         ),
         title: isEditting
             ? new TextField(
@@ -45,10 +49,7 @@ class PlayerCardState extends State<PlayerCard> {
             new IconButton(
               icon: new Icon(Icons.remove),
               color: Theme.of(context).accentColor,
-              onPressed: () => setState(() {
-                    widget.players
-                        .removeAt(widget.players.indexOf(widget.player));
-                  }),
+              onPressed: removePlayer,
             ),
           ],
         ),
@@ -57,7 +58,7 @@ class PlayerCardState extends State<PlayerCard> {
   }
 
   @override
-  void dispose() {
+  dispose() {
     controller.dispose();
     focusNode.dispose();
     super.dispose();
@@ -73,6 +74,26 @@ class PlayerCardState extends State<PlayerCard> {
         updateName();
       }
     });
+  }
+
+  removePlayer() {
+    setState(() {
+      widget.players.removeAt(widget.players.indexOf(widget.player));
+    });
+  }
+
+  updateColor() async {
+    Color color = await showDialog(
+        context: context,
+        child: new PrimaryColorPickerDialog(
+          selected: widget.player.color,
+        ));
+
+    if (color != null) {
+      setState(() {
+        widget.player.color = color;
+      });
+    }
   }
 
   updateName({value}) {

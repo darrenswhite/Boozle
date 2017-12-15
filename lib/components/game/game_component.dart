@@ -35,10 +35,27 @@ class GameComponentState extends State<GameComponent>
 
   @override
   Widget build(BuildContext context) {
+    Widget body = new Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        actionAnimation,
+      ],
+    );
+
+    if (actionCard.action.image != null) {
+      body = new DecoratedBox(
+        decoration: new BoxDecoration(
+          image: new DecorationImage(
+            image: new AssetImage(actionCard.action.image),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: body,
+      );
+    }
+
     return new Scaffold(
-      body: new Center(
-        child: actionAnimation,
-      ),
+      body: body,
       floatingActionButton: new FloatingActionButton(
         onPressed: nextAction,
         tooltip: 'Continue',
