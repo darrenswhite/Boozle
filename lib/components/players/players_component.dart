@@ -21,9 +21,21 @@ class PlayersComponentState extends State<PlayersComponent> {
       context: context,
       child: new AlertDialog(
         title: new Text('Add new player'),
+        titlePadding: new EdgeInsets.only(
+          left: 15.0,
+          top: 15.0,
+          right: 15.0,
+          bottom: 0.0,
+        ),
         content: new TextField(
           decoration: new InputDecoration(labelText: 'Name'),
           controller: controller,
+        ),
+        contentPadding: new EdgeInsets.only(
+          left: 15.0,
+          top: 0.0,
+          right: 15.0,
+          bottom: 0.0,
         ),
         actions: <Widget>[
           new FlatButton(
