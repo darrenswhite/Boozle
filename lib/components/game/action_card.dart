@@ -19,30 +19,43 @@ class ActionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MediaQuery.of(context).orientation == Orientation.landscape
-        ? buildLandscape(context)
-        : buildPortrait(context);
-  }
-
-  Widget buildLandscape(BuildContext context) {
-    return new Text('TODO');
-  }
-
-  buildPortrait(BuildContext context) {
-    Color playerColor =
-        player != null && action.affectsPlayer ? player.color : null;
-    List<Widget> widgets = [];
+    Widget actionWidget = buildAction(context);
+    bool landscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
 
     if (action.image != null) {
-      widgets.add(
-        new Image.asset(
-          action.image,
-          fit: BoxFit.cover,
-        ),
+      return new Stack(
+        children: <Widget>[
+          new DecoratedBox(
+            decoration: new BoxDecoration(
+              image: new DecorationImage(
+                  image: new AssetImage(action.image), fit: BoxFit.cover),
+            ),
+            child: new Container(),
+          ),
+          new Column(
+            mainAxisAlignment:
+                landscape ? MainAxisAlignment.end : MainAxisAlignment.center,
+            children: <Widget>[
+              new Card(
+                color: Theme.of(context).primaryColor.withAlpha(100),
+                child: actionWidget,
+              ),
+            ],
+          ),
+        ],
       );
     }
 
-    widgets.add(new ListTile(
+    return new Card(child: actionWidget);
+  }
+
+  Widget buildAction(BuildContext context) {
+    Color playerColor =
+        player != null && action.affectsPlayer ? player.color : null;
+    List<Widget> columnWidgets = [];
+
+    columnWidgets.add(new ListTile(
       title: new Text(action.name,
           style: new TextStyle(fontWeight: FontWeight.w500)),
       leading: new Icon(
@@ -51,10 +64,10 @@ class ActionCard extends StatelessWidget {
       ),
     ));
 
-    widgets.add(new Divider());
+    columnWidgets.add(new Divider());
 
     if (player != null && action.affectsPlayer) {
-      widgets.add(new ListTile(
+      columnWidgets.add(new ListTile(
         title: new Text(player.name,
             style: new TextStyle(fontWeight: FontWeight.w500)),
         leading: new Icon(
@@ -64,7 +77,7 @@ class ActionCard extends StatelessWidget {
       ));
     }
 
-    widgets.add(new ListTile(
+    columnWidgets.add(new ListTile(
       title: new Text(action.description),
       leading: new Icon(
         Icons.description,
@@ -72,11 +85,10 @@ class ActionCard extends StatelessWidget {
       ),
     ));
 
-    return new Card(
-      child: new Column(
-        mainAxisSize: MainAxisSize.min,
-        children: widgets,
-      ),
+    return new Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: columnWidgets,
     );
   }
 
