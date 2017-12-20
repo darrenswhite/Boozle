@@ -1,3 +1,4 @@
+import 'package:boozle/components/game/action.dart';
 import 'package:boozle/components/game/action_card.dart';
 import 'package:boozle/components/game/action_controller.dart';
 import 'package:boozle/components/players/player_list.dart';
@@ -19,45 +20,107 @@ class GameComponentState extends State<GameComponent>
     with SingleTickerProviderStateMixin {
   AnimationController controller;
   Widget actionAnimation;
+  Widget imageAnimation, prevImageAnimation;
+  DecoratedBox imageWidget, prevImageWidget;
   ActionCard actionCard;
+  Action action;
+  String prevImage;
+  bool diffImage = false;
 
-  animateAction(animation(Animation<double> animation), {dynamic callback()}) {
+  void animateAction() {
+    widget.controller.next();
+
     setState(() {
-      actionAnimation = animation(controller);
-
-      if (callback == null) {
-        controller.forward(from: 0.0);
-      } else {
-        controller.forward(from: 0.0).whenComplete(callback);
-      }
+      animateActionOut(callback: () {
+        actionCard = new ActionCard(
+            widget.controller.currentAction, widget.controller.currentPlayer);
+        imageWidget = getActionImage();
+        setState(() {
+          animateActionIn(callback: () {
+            prevImageAnimation = null;
+            prevImageWidget = imageWidget;
+          });
+        });
+      });
     });
+  }
+
+  void animateActionIn({dynamic callback()}) {
+    actionAnimation = new SlideTransition(
+      position: new Tween<Offset>(
+        begin: const Offset(-1.0, 0.0),
+        end: Offset.zero,
+      )
+          .animate(new CurvedAnimation(
+        parent: controller,
+        curve: Curves.elasticOut,
+      )),
+      child: actionCard,
+    );
+
+    imageAnimation = new FadeTransition(
+      opacity: new Tween<double>(
+        begin: 0.0,
+        end: 1.0,
+      )
+          .animate(controller),
+      child: imageWidget,
+    );
+
+    if (callback == null) {
+      controller.forward(from: 0.0);
+    } else {
+      controller.forward(from: 0.0).whenComplete(callback);
+    }
+  }
+
+  void animateActionOut({dynamic callback()}) {
+    actionAnimation = new SlideTransition(
+      position: new Tween<Offset>(
+        begin: Offset.zero,
+        end: const Offset(1.0, 0.0),
+      )
+          .animate(new CurvedAnimation(
+        parent: controller,
+        curve: Curves.elasticIn,
+      )),
+      child: actionCard,
+    );
+
+    imageAnimation = new FadeTransition(
+      opacity: new Tween<double>(
+        begin: 1.0,
+        end: 0.0,
+      )
+          .animate(controller),
+      child: imageWidget,
+    );
+
+    if (callback == null) {
+      controller.forward(from: 0.0);
+    } else {
+      controller.forward(from: 0.0).whenComplete(callback);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    Widget body = new Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        actionAnimation,
-      ],
-    );
+    List<Widget> stackWidgets = [];
 
-    if (actionCard.action.image != null) {
-      body = new DecoratedBox(
-        decoration: new BoxDecoration(
-          image: new DecorationImage(
-            image: new AssetImage(actionCard.action.image),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: body,
-      );
+    if (imageAnimation != null) {
+      stackWidgets.add(imageAnimation);
     }
 
+    stackWidgets.add(new Center(
+      child: actionAnimation,
+    ));
+
     return new Scaffold(
-      body: body,
+      body: new Stack(
+        children: stackWidgets,
+      ),
       floatingActionButton: new FloatingActionButton(
-        onPressed: nextAction,
+        onPressed: animateAction,
         tooltip: 'Continue',
         child: new Icon(Icons.play_arrow),
       ),
@@ -65,38 +128,39 @@ class GameComponentState extends State<GameComponent>
   }
 
   @override
-  dispose() {
+  void dispose() {
     controller.dispose();
     super.dispose();
   }
 
+  DecoratedBox getActionImage() {
+    Widget image;
+
+    if (widget.controller.currentAction.image != null) {
+      image = new DecoratedBox(
+        child: new Container(),
+        decoration: new BoxDecoration(
+          image: new DecorationImage(
+            image: new AssetImage(widget.controller.currentAction.image),
+            fit: BoxFit.cover,
+          ),
+        ),
+      );
+    }
+
+    return image;
+  }
+
   @override
-  initState() {
+  void initState() {
     super.initState();
-    setNextAction();
-    actionAnimation = actionCard;
+    widget.controller.next();
+    actionAnimation = actionCard = new ActionCard(
+        widget.controller.currentAction, widget.controller.currentPlayer);
+    imageAnimation = imageWidget = getActionImage();
     controller = new AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
-  }
-
-  nextAction() {
-    animateAction(
-      actionCard.slideOut,
-      callback: () {
-        setNextAction();
-        animateAction(actionCard.slideIn);
-      },
-    );
-  }
-
-  setNextAction() {
-    if (actionCard == null && widget.controller.currentAction != null) {
-      actionCard = new ActionCard(
-          widget.controller.currentAction, widget.controller.currentPlayer);
-    } else {
-      actionCard = widget.controller.next();
-    }
   }
 }

@@ -56,11 +56,11 @@ class BoozleState extends State<Boozle> with SingleTickerProviderStateMixin {
     super.initState();
     players = new PlayerList();
     tabs = {
-      new Tab(text: 'Settings', icon: const Icon(Icons.settings)):
+      new Tab(icon: const Icon(Icons.settings)):
           new SettingsComponent(),
-      new Tab(text: 'Boozle', icon: const Icon(Icons.gamepad)):
+      new Tab(icon: const Icon(Icons.gamepad)):
           new GameComponent(players),
-      new Tab(text: 'Players', icon: const Icon(Icons.people)):
+      new Tab(icon: const Icon(Icons.people)):
           new PlayersComponent(players),
     };
     tabController = new TabController(

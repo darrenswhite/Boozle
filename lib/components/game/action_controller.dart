@@ -11,16 +11,17 @@ class ActionController {
   final PlayerList players;
 
   Action currentAction;
+  ActionCard currentActionCard;
   Player currentPlayer;
 
   ActionController(this.players);
 
-  ActionCard next() {
+  void next() {
     currentAction = Application
         .ACTION_MODELS[rnd.nextInt(Application.ACTION_MODELS.length)];
     currentPlayer =
         players.length > 0 ? players[rnd.nextInt(players.length)] : null;
 
-    return new ActionCard(currentAction, currentPlayer);
+    currentActionCard = new ActionCard(currentAction, currentPlayer);
   }
 }

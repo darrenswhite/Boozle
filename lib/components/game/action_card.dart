@@ -3,15 +3,6 @@ import 'package:boozle/components/players/player.dart';
 import 'package:flutter/material.dart';
 
 class ActionCard extends StatelessWidget {
-  static final tweenIn = new Tween<Offset>(
-    begin: const Offset(-1.0, 0.0),
-    end: Offset.zero,
-  );
-  static final tweenOut = new Tween<Offset>(
-    begin: Offset.zero,
-    end: const Offset(1.0, 0.0),
-  );
-
   final Action action;
   final Player player;
 
@@ -64,23 +55,5 @@ class ActionCard extends StatelessWidget {
       ),
       color: cardColor,
     );
-  }
-
-  Widget slide(Animation<double> parent, Tween<Offset> tween, Curve curve) {
-    return new SlideTransition(
-      position: tween.animate(new CurvedAnimation(
-        parent: parent,
-        curve: curve,
-      )),
-      child: this,
-    );
-  }
-
-  Widget slideIn(Animation<double> parent) {
-    return slide(parent, tweenIn, Curves.elasticOut);
-  }
-
-  Widget slideOut(Animation<double> parent) {
-    return slide(parent, tweenOut, Curves.elasticIn);
   }
 }

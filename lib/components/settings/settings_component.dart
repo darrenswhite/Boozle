@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 class SettingsComponent extends StatelessWidget {
-  const SettingsComponent();
-
   @override
   Widget build(BuildContext context) {
     return new Center(

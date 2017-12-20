@@ -15,9 +15,9 @@ class PlayersComponent extends StatefulWidget {
 }
 
 class PlayersComponentState extends State<PlayersComponent> {
-  addPlayer() async {
+  void addPlayer() {
     TextEditingController controller = new TextEditingController();
-    String input = await showDialog<String>(
+    showDialog<String>(
       context: context,
       child: new AlertDialog(
         title: new Text('Add new player'),
@@ -48,16 +48,16 @@ class PlayersComponentState extends State<PlayersComponent> {
           )
         ],
       ),
-    );
-
-    if (input != null) {
-      widget.players.insert(
-          widget.players.length,
-          new Player(
-              input,
-              new Color.fromARGB(255, widget.rnd.nextInt(256),
-                  widget.rnd.nextInt(256), widget.rnd.nextInt(256))));
-    }
+    ).then((input) {
+      if (input != null) {
+        widget.players.insert(
+            widget.players.length,
+            new Player(
+                input,
+                new Color.fromARGB(255, widget.rnd.nextInt(256),
+                    widget.rnd.nextInt(256), widget.rnd.nextInt(256))));
+      }
+    });
   }
 
   @override

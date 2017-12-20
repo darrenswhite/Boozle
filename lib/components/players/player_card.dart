@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:boozle/components/players/player.dart';
 import 'package:boozle/components/players/player_list.dart';
 import 'package:flutter/material.dart';
@@ -58,14 +60,14 @@ class PlayerCardState extends State<PlayerCard> {
   }
 
   @override
-  dispose() {
+  void dispose() {
     controller.dispose();
     focusNode.dispose();
     super.dispose();
   }
 
   @override
-  initState() {
+  void initState() {
     super.initState();
     controller = new TextEditingController(text: widget.player.name);
     focusNode = new FocusNode();
@@ -76,27 +78,28 @@ class PlayerCardState extends State<PlayerCard> {
     });
   }
 
-  removePlayer() {
+  void removePlayer() {
     setState(() {
       widget.players.removeAt(widget.players.indexOf(widget.player));
     });
   }
 
-  updateColor() async {
-    Color color = await showDialog(
-        context: context,
-        child: new PrimaryColorPickerDialog(
-          selected: widget.player.color,
-        ));
-
-    if (color != null) {
-      setState(() {
-        widget.player.color = color;
-      });
-    }
+  void updateColor() {
+    showDialog(
+      context: context,
+      child: new PrimaryColorPickerDialog(
+        selected: widget.player.color,
+      ),
+    ).then((color) {
+      if (color != null) {
+        setState(() {
+          widget.player.color = color;
+        });
+      }
+    });
   }
 
-  updateName({value}) {
+  void updateName({value}) {
     setState(() {
       widget.player.name = value != null ? value : controller.text;
       isEditting = !isEditting;
