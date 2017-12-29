@@ -5,12 +5,12 @@ import 'package:boozle/components/players/player_list.dart';
 import 'package:flutter/material.dart';
 
 class GameComponent extends StatefulWidget {
-  final ActionController controller;
-  final PlayerList players;
-
   GameComponent(this.players, {Key key})
       : controller = new ActionController(players),
         super(key: key);
+
+  final ActionController controller;
+  final PlayerList players;
 
   @override
   GameComponentState createState() => new GameComponentState();

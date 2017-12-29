@@ -7,14 +7,15 @@ import 'package:boozle/components/players/player_list.dart';
 import 'package:boozle/config/application.dart';
 
 class ActionController {
+  ActionController(this.players);
+
   final Random rnd = new Random();
   final PlayerList players;
 
   Action currentAction;
   ActionCard currentActionCard;
-  Player currentPlayer;
 
-  ActionController(this.players);
+  Player currentPlayer;
 
   void next() {
     currentAction = Application

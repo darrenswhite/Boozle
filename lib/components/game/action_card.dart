@@ -3,10 +3,10 @@ import 'package:boozle/components/players/player.dart';
 import 'package:flutter/material.dart';
 
 class ActionCard extends StatelessWidget {
+  ActionCard(this.action, this.player, {Key key}) : super(key: key);
+
   final Action action;
   final Player player;
-
-  ActionCard(this.action, this.player, {Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

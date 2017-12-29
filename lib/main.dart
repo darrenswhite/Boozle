@@ -52,7 +52,7 @@ class BoozleState extends State<Boozle> with SingleTickerProviderStateMixin {
   }
 
   @override
-  initState() {
+  void initState() {
     super.initState();
     players = new PlayerList();
     tabs = {
