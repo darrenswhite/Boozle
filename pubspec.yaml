@@ -6,6 +6,7 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^0.1.1
+  firebase_database: ^0.3.4
   flutter_color_picker: ^0.0.1
   logging: ^0.11.3
 
