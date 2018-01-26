@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:boozle/config/application.dart';
 import 'package:boozle/config/database.dart';
 import 'package:boozle/config/router.dart';
+import 'package:boozle/instance/instance.dart';
 import 'package:boozle/util/hashids.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/ui/utils/stream_subscriber_mixin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
@@ -23,25 +25,27 @@ class LobbyComponent extends StatefulWidget {
   _LobbyComponentState createState() => new _LobbyComponentState();
 }
 
-class _LobbyComponentState extends State<LobbyComponent> {
+class _LobbyComponentState extends State<LobbyComponent>
+    with StreamSubscriberMixin<Event> {
   static final Logger log = new Logger('_LobbyComponentState');
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
-  bool authorised = false;
-  bool disabled = false;
+  final List<Instance> _instances = <Instance>[];
+  bool _authorised = false;
+  bool _disabled = false;
   String _instanceHash;
 
   @override
   Widget build(BuildContext context) {
-    if (authorised) {
+    if (_authorised) {
       return new Scaffold(
         key: _scaffoldKey,
         body: new Column(
           children: <Widget>[
             _buildTitle(),
-            _buildJoinForm(disabled: disabled),
+            _buildJoinForm(disabled: _disabled),
             new Expanded(child: new Container()),
-            _buildNewButton(disabled: disabled),
+            _buildNewButton(disabled: _disabled),
           ],
         ),
       );
@@ -60,10 +64,22 @@ class _LobbyComponentState extends State<LobbyComponent> {
   }
 
   @override
+  void dispose() {
+    cancelSubscriptions();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     FirebaseAuth.instance.signInAnonymously().then((_) {
-      setState(() => authorised = true);
+      setState(() => _authorised = true);
+    });
+    listen(Database.instancesRef.onChildAdded, (event) {
+      _instances.add(new Instance.snapshot(event.snapshot));
+    });
+    listen(Database.instancesRef.onChildRemoved, (event) {
+      _instances.remove(new Instance.snapshot(event.snapshot));
     });
   }
 
@@ -138,16 +154,16 @@ class _LobbyComponentState extends State<LobbyComponent> {
 
   void _join() {
     try {
-      setState(() => disabled = true);
+      setState(() => _disabled = true);
       log.info('Validating form');
       if (_formKey.currentState.validate()) {
         log.info('Saving form');
         _formKey.currentState.save();
-        setState(() => disabled = false);
+        setState(() => _disabled = false);
         _navigateTabs(_instanceHash);
       }
     } finally {
-      setState(() => disabled = false);
+      setState(() => _disabled = false);
     }
   }
 
@@ -161,7 +177,7 @@ class _LobbyComponentState extends State<LobbyComponent> {
   Future<Null> _new() async {
     try {
       String hash;
-      setState(() => disabled = true);
+      setState(() => _disabled = true);
       final TransactionResult transactionResult =
           await Database.instancesRef.runTransaction((data) async {
         final List<dynamic> instances = new List.from(data.value ?? []);
@@ -192,17 +208,13 @@ class _LobbyComponentState extends State<LobbyComponent> {
         }
       }
     } finally {
-      setState(() => disabled = false);
+      setState(() => _disabled = false);
     }
   }
 
-  String _validateInstanceHash(String value) {
-    if (value != null && value.length == kMinHashLength) {
-      return null;
-    } else {
-      // TODO Validate that the hash exists in the database
-      // See: https://github.com/flutter/flutter/issues/9688
-    }
-    return 'Room code must be $kMinHashLength characters long';
+  String _validateInstanceHash(String hash) {
+    return hash != null && _instances.any((i) => i.hash == hash)
+        ? null
+        : 'Instance does not exist';
   }
 }
