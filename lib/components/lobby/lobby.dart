@@ -28,6 +28,7 @@ class _LobbyComponentState extends State<LobbyComponent> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   bool authorised = false;
+  bool disabled = false;
   String _instanceHash;
 
   @override
@@ -38,9 +39,9 @@ class _LobbyComponentState extends State<LobbyComponent> {
         body: new Column(
           children: <Widget>[
             _buildTitle(),
-            _buildJoinForm(),
+            _buildJoinForm(disabled: disabled),
             new Expanded(child: new Container()),
-            _buildNewButton(),
+            _buildNewButton(disabled: disabled),
           ],
         ),
       );
@@ -66,7 +67,7 @@ class _LobbyComponentState extends State<LobbyComponent> {
     });
   }
 
-  Form _buildJoinForm() {
+  Form _buildJoinForm({bool disabled: false}) {
     return new Form(
       key: _formKey,
       child: new Padding(
@@ -94,7 +95,7 @@ class _LobbyComponentState extends State<LobbyComponent> {
                   height: ButtonTheme.of(context).height),
               child: new RaisedButton(
                 child: const Text('JOIN'),
-                onPressed: _join,
+                onPressed: disabled ? null : _join,
               ),
             ),
           ],
@@ -103,7 +104,7 @@ class _LobbyComponentState extends State<LobbyComponent> {
     );
   }
 
-  Widget _buildNewButton() {
+  Widget _buildNewButton({bool disabled: false}) {
     return new Container(
       margin: const EdgeInsets.only(
         left: 5.0,
@@ -114,7 +115,7 @@ class _LobbyComponentState extends State<LobbyComponent> {
           new BoxConstraints.expand(height: ButtonTheme.of(context).height),
       child: new RaisedButton(
         child: const Text('NEW'),
-        onPressed: _new,
+        onPressed: disabled ? null : _new,
       ),
     );
   }
@@ -136,11 +137,17 @@ class _LobbyComponentState extends State<LobbyComponent> {
   }
 
   void _join() {
-    log.info('Validating form');
-    if (_formKey.currentState.validate()) {
-      log.info('Saving form');
-      _formKey.currentState.save();
-      _navigateTabs(_instanceHash);
+    try {
+      setState(() => disabled = true);
+      log.info('Validating form');
+      if (_formKey.currentState.validate()) {
+        log.info('Saving form');
+        _formKey.currentState.save();
+        setState(() => disabled = false);
+        _navigateTabs(_instanceHash);
+      }
+    } finally {
+      setState(() => disabled = false);
     }
   }
 
@@ -149,38 +156,43 @@ class _LobbyComponentState extends State<LobbyComponent> {
     Navigator.pushNamed(context, Router.TABS + hash);
   }
 
-  /// New instances have hashes based off the number of existing instances
+  /// New instances have index-based hashes
+  /// Old instances are replaced before creating new instance hashes
   Future<Null> _new() async {
-    String hash;
+    try {
+      String hash;
+      setState(() => disabled = true);
+      final TransactionResult transactionResult =
+          await Database.instancesRef.runTransaction((data) async {
+        final List<dynamic> instances = new List.from(data.value ?? []);
+        int index = instances.indexOf(null);
 
-    final TransactionResult transactionResult =
-        await Database.instancesRef.runTransaction((data) async {
-      final List<dynamic> instances = new List.from(data.value ?? []);
-      int index = instances.indexOf(null);
+        if (index == -1) {
+          index = instances.length;
+        } else {
+          instances.removeAt(index);
+        }
 
-      if (index == -1) {
-        index = instances.length;
+        hash = _hash.encode([index]);
+        instances.insert(index, {'hash': hash});
+
+        data.value = instances;
+
+        return data;
+      });
+
+      if (transactionResult.committed) {
+        _navigateTabs(hash);
       } else {
-        instances.removeAt(index);
+        _scaffoldKey.currentState.showSnackBar(new SnackBar(
+          content: new Text('Unable to create new instance'),
+        ));
+        if (transactionResult.error != null) {
+          log.severe(transactionResult.error.message);
+        }
       }
-
-      hash = _hash.encode([index]);
-      instances.insert(index, {'hash': hash});
-
-      data.value = instances;
-
-      return data;
-    });
-
-    if (transactionResult.committed) {
-      _navigateTabs(hash);
-    } else {
-      _scaffoldKey.currentState.showSnackBar(new SnackBar(
-        content: new Text('Unable to create new instance'),
-      ));
-      if (transactionResult.error != null) {
-        log.severe(transactionResult.error.message);
-      }
+    } finally {
+      setState(() => disabled = false);
     }
   }
 
