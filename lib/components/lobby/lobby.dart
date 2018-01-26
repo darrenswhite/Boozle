@@ -1,9 +1,22 @@
+import 'dart:async';
+
 import 'package:boozle/config/application.dart';
+import 'package:boozle/config/database.dart';
 import 'package:boozle/config/router.dart';
+import 'package:boozle/util/hashids.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:logging/logging.dart';
 
-const int kRoomCodeLength = 4;
+const String kHashAlphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+const int kMinHashLength = 4;
+
+Hashids _hash = new Hashids(
+  alphabet: kHashAlphabet,
+  minHashLength: kMinHashLength,
+);
 
 class LobbyComponent extends StatefulWidget {
   @override
@@ -11,21 +24,46 @@ class LobbyComponent extends StatefulWidget {
 }
 
 class _LobbyComponentState extends State<LobbyComponent> {
+  static final Logger log = new Logger('_LobbyComponentState');
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
-  String _roomCode;
+  bool authorised = false;
+  String _instanceHash;
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      body: new Column(
-        children: <Widget>[
-          _buildTitle(),
-          _buildJoinForm(),
-          new Expanded(child: new Container()),
-          _buildNewButton(),
-        ],
-      ),
-    );
+    if (authorised) {
+      return new Scaffold(
+        key: _scaffoldKey,
+        body: new Column(
+          children: <Widget>[
+            _buildTitle(),
+            _buildJoinForm(),
+            new Expanded(child: new Container()),
+            _buildNewButton(),
+          ],
+        ),
+      );
+    } else {
+      return new Scaffold(
+        body: new Center(
+          child: new Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              new CircularProgressIndicator(),
+            ],
+          ),
+        ),
+      );
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    FirebaseAuth.instance.signInAnonymously().then((_) {
+      setState(() => authorised = true);
+    });
   }
 
   Form _buildJoinForm() {
@@ -38,16 +76,17 @@ class _LobbyComponentState extends State<LobbyComponent> {
             new TextFormField(
               decoration: const InputDecoration(
                 icon: const Icon(Icons.code),
-                labelText: 'Room code',
+                labelText: 'Instance code',
               ),
               inputFormatters: <TextInputFormatter>[
-                new LengthLimitingTextInputFormatter(kRoomCodeLength),
                 TextInputFormatter.withFunction((oldValue, newValue) {
                   return newValue.copyWith(text: newValue.text.toUpperCase());
                 }),
+                new WhitelistingTextInputFormatter(
+                    new RegExp('[$kHashAlphabet]')),
               ],
-              onSaved: (value) => _roomCode = value,
-              validator: _validateRoomCode,
+              onSaved: (value) => _instanceHash = value,
+              validator: _validateInstanceHash,
             ),
             new Container(
               margin: const EdgeInsets.symmetric(vertical: 20.0),
@@ -97,20 +136,58 @@ class _LobbyComponentState extends State<LobbyComponent> {
   }
 
   void _join() {
+    log.info('Validating form');
     if (_formKey.currentState.validate()) {
+      log.info('Saving form');
       _formKey.currentState.save();
-      Navigator.pushNamed(context, Router.TABS);
+      log.info('Instance hash: $_instanceHash');
+      Navigator.pushNamed(context, Router.TABS + _instanceHash);
     }
   }
 
-  void _new() {
-    Navigator.pushNamed(context, Router.TABS);
+  /// New instances have hashes based off the number of existing instances
+  Future<Null> _new() async {
+    String hash;
+
+    final TransactionResult transactionResult =
+        await Database.instancesRef.runTransaction((data) async {
+      final List<dynamic> instances = new List.from(data.value ?? []);
+      int index = instances.indexOf(null);
+
+      if (index == -1) {
+        index = instances.length;
+      } else {
+        instances.removeAt(index);
+      }
+
+      hash = _hash.encode([index]);
+      instances.insert(index, {'hash': hash});
+
+      data.value = instances;
+
+      return data;
+    });
+
+    if (transactionResult.committed) {
+      log.info('Instance hash: $hash');
+      Navigator.pushNamed(context, Router.TABS + hash);
+    } else {
+      _scaffoldKey.currentState.showSnackBar(new SnackBar(
+        content: new Text('Unable to create new instance'),
+      ));
+      if (transactionResult.error != null) {
+        log.severe(transactionResult.error.message);
+      }
+    }
   }
 
-  String _validateRoomCode(String value) {
-    if (value != null && value.length == kRoomCodeLength) {
+  String _validateInstanceHash(String value) {
+    if (value != null && value.length == kMinHashLength) {
       return null;
+    } else {
+      // TODO Validate that the hash exists in the database
+      // See: https://github.com/flutter/flutter/issues/9688
     }
-    return 'Room code must be $kRoomCodeLength characters long';
+    return 'Room code must be $kMinHashLength characters long';
   }
 }

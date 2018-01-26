@@ -5,6 +5,10 @@ import 'package:boozle/components/settings/settings_component.dart';
 import 'package:flutter/material.dart';
 
 class TabsComponent extends StatefulWidget {
+  const TabsComponent(this.instanceHash);
+
+  final String instanceHash;
+
   @override
   State<StatefulWidget> createState() => new _TabsComponentState();
 }
