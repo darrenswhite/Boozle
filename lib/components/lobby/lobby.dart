@@ -140,9 +140,13 @@ class _LobbyComponentState extends State<LobbyComponent> {
     if (_formKey.currentState.validate()) {
       log.info('Saving form');
       _formKey.currentState.save();
-      log.info('Instance hash: $_instanceHash');
-      Navigator.pushNamed(context, Router.TABS + _instanceHash);
+      _navigateTabs(_instanceHash);
     }
+  }
+
+  void _navigateTabs(String hash) {
+    log.info('Navigiating to tabs with instance hash: $hash');
+    Navigator.pushNamed(context, Router.TABS + hash);
   }
 
   /// New instances have hashes based off the number of existing instances
@@ -169,8 +173,7 @@ class _LobbyComponentState extends State<LobbyComponent> {
     });
 
     if (transactionResult.committed) {
-      log.info('Instance hash: $hash');
-      Navigator.pushNamed(context, Router.TABS + hash);
+      _navigateTabs(hash);
     } else {
       _scaffoldKey.currentState.showSnackBar(new SnackBar(
         content: new Text('Unable to create new instance'),
