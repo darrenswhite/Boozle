@@ -122,7 +122,7 @@ class GameComponentState extends State<GameComponent>
       floatingActionButton: new FloatingActionButton(
         onPressed: animateAction,
         tooltip: 'Continue',
-        child: new Icon(Icons.play_arrow),
+        child: const Icon(Icons.play_arrow),
       ),
     );
   }

@@ -70,7 +70,7 @@ class PlayersComponentState extends State<PlayersComponent> {
             widget.players, widget.players[index], context, animation),
       ),
       floatingActionButton: new FloatingActionButton(
-        child: new Icon(Icons.add),
+        child: const Icon(Icons.add),
         onPressed: addPlayer,
       ),
     );
