@@ -1,4 +1,4 @@
-import 'package:boozle/components/game/action.dart';
+import 'package:boozle/components/instance/action.dart';
 import 'package:flutter/material.dart';
 
 class Application {

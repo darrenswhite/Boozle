@@ -1,7 +1,7 @@
 import 'dart:math';
 
-import 'package:boozle/components/game/action.dart';
-import 'package:boozle/components/game/action_card.dart';
+import 'package:boozle/components/instance/action.dart';
+import 'package:boozle/components/instance/action_card.dart';
 import 'package:boozle/components/players/player.dart';
 import 'package:boozle/components/players/player_list.dart';
 import 'package:boozle/config/application.dart';

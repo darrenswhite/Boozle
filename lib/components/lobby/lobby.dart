@@ -1,9 +1,9 @@
 import 'dart:async';
 
+import 'package:boozle/components/instance/instance.dart';
 import 'package:boozle/config/application.dart';
 import 'package:boozle/config/database.dart';
 import 'package:boozle/config/router.dart';
-import 'package:boozle/instance/instance.dart';
 import 'package:boozle/util/hashids.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
