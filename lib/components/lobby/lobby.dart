@@ -37,7 +37,6 @@ class _LobbyComponentState extends State<LobbyComponent>
             _buildTitle(),
             _buildJoinForm(disabled: _disabled),
             new Expanded(child: new Container()),
-            _buildNewButton(disabled: _disabled),
           ],
         ),
       );
@@ -106,7 +105,7 @@ class _LobbyComponentState extends State<LobbyComponent>
               validator: _validateInstanceHash,
             ),
             new Container(
-              margin: const EdgeInsets.symmetric(vertical: 20.0),
+              margin: const EdgeInsets.only(top: 20.0),
               constraints: new BoxConstraints.expand(
                   height: ButtonTheme.of(context).height),
               child: new RaisedButton(
@@ -114,24 +113,17 @@ class _LobbyComponentState extends State<LobbyComponent>
                 onPressed: disabled ? null : _join,
               ),
             ),
+            new Container(
+              margin: const EdgeInsets.only(top: 20.0),
+              constraints: new BoxConstraints.expand(
+                  height: ButtonTheme.of(context).height),
+              child: new RaisedButton(
+                child: const Text('NEW'),
+                onPressed: disabled ? null : _new,
+              ),
+            ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildNewButton({bool disabled: false}) {
-    return new Container(
-      margin: const EdgeInsets.only(
-        left: 5.0,
-        right: 5.0,
-        bottom: 5.0,
-      ),
-      constraints:
-          new BoxConstraints.expand(height: ButtonTheme.of(context).height),
-      child: new RaisedButton(
-        child: const Text('NEW'),
-        onPressed: disabled ? null : _new,
       ),
     );
   }
