@@ -19,6 +19,7 @@ class TabsComponent extends StatefulWidget {
 
 class _TabsComponentState extends State<TabsComponent>
     with SingleTickerProviderStateMixin {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   Map<Tab, Widget> tabs;
   TabController tabController;
   PlayerList players;
@@ -28,10 +29,12 @@ class _TabsComponentState extends State<TabsComponent>
     return new WillPopScope(
       onWillPop: _leaveInstance,
       child: new Scaffold(
+        key: _scaffoldKey,
         appBar: new AppBar(
           elevation:
               Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
-          title: new TabBar(
+          title: new Text('Instance code: ${widget.instanceHash}'),
+          bottom: new TabBar(
             controller: tabController,
             tabs: tabs.keys.toList(),
           ),

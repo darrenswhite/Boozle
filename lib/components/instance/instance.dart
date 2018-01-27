@@ -32,14 +32,70 @@ class Instance {
     );
   }
 
+  static final Logger log = new Logger('Instance');
+
+  final int index;
+  final String hash;
+  final Map<String, dynamic> users;
+
+  void addPlayer(String uid) {
+    log.info('Adding user to instance: $uid');
+    Database.instancesRef.child('$index/users/$uid').set(true);
+    users[uid] = true;
+  }
+
   /// Exactly one of index or hash must be given
   static Future<Instance> fromDatabase({int index, String hash}) async {
+    return new Instance.snapshot(
+        await reference(index: index, hash: hash).once());
+  }
+
+  static DatabaseReference reference({int index, String hash}) {
     assert((index != null && hash == null) || (index == null && hash != null));
     if (hash != null) {
       index = _hash.decode(hash)[0];
     }
-    return new Instance.snapshot(
-        await Database.instancesRef.child(index.toString()).once());
+    return Database.instancesRef.child(index.toString());
+  }
+
+  /// Removes a player. If removing the last player will show an alert dialog
+  /// for confirmation. Removing the last player will remove the instance.
+  Future<bool> removePlayer(BuildContext context, String uid) async {
+    if (users.length > 1 || await _showRemovePlayerDialog(context)) {
+      log.info('Removing user from instance: $uid');
+      Database.instancesRef.child('$index/users/$uid').set(null);
+      users.remove(uid);
+      if (users.isEmpty) {
+        Database.instancesRef.child(index.toString()).set(null);
+      }
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> _showRemovePlayerDialog(BuildContext context) {
+    log.info('Showing remove player alert dialog');
+    return showDialog<bool>(
+          context: context,
+          child: new AlertDialog(
+            title: const Text('Are you sure you want to leave?'),
+            content: const Text('You are the only player in this instance. '
+                'Leaving will remove the instance. '
+                'Really leave this instance?'),
+            actions: <Widget>[
+              new FlatButton(
+                child: const Text('YES'),
+                onPressed: () => Navigator.of(context).pop(true),
+              ),
+              new FlatButton(
+                child: const Text('NO'),
+                onPressed: () => Navigator.of(context).pop(false),
+              ),
+            ],
+          ),
+        ) ??
+        false;
   }
 
   static Future<Instance> transaction() async {
@@ -81,58 +137,6 @@ class Instance {
       }
       return null;
     }
-  }
-
-  static final Logger log = new Logger('Instance');
-
-  final int index;
-  final String hash;
-  final Map<String, dynamic> users;
-
-  void addPlayer(String uid) {
-    log.info('Adding user to instance: $uid');
-    Database.instancesRef.child('$index/users/$uid').set(true);
-    users[uid] = true;
-  }
-
-  /// Removes a player. If removing the last player will show an alert dialog
-  /// for confirmation. Removing the last player will remove the instance.
-  Future<bool> removePlayer(BuildContext context, String uid) async {
-    if (users.length > 1 || await _showRemovePlayerDialog(context)) {
-      log.info('Removing user from instance: $uid');
-      Database.instancesRef.child('$index/users/$uid').set(null);
-      users.remove(uid);
-      if (users.isEmpty) {
-        Database.instancesRef.child(index.toString()).set(null);
-      }
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  Future<bool> _showRemovePlayerDialog(BuildContext context) {
-    log.info('Showing remove player alert dialog');
-    return showDialog<bool>(
-          context: context,
-          child: new AlertDialog(
-            title: const Text('Are you sure you want to leave?'),
-            content: const Text('You are the only player in this instance. '
-                'Leaving will remove the instance. '
-                'Really leave this instance?'),
-            actions: <Widget>[
-              new FlatButton(
-                child: const Text('YES'),
-                onPressed: () => Navigator.of(context).pop(true),
-              ),
-              new FlatButton(
-                child: const Text('NO'),
-                onPressed: () => Navigator.of(context).pop(false),
-              ),
-            ],
-          ),
-        ) ??
-        false;
   }
 
   void view(BuildContext context) {
