@@ -1,7 +1,7 @@
 import 'dart:math';
 
-import 'package:boozle/components/players/player.dart';
-import 'package:boozle/components/players/player_list.dart';
+import 'package:boozle/components/player/player.dart';
+import 'package:boozle/components/player/player_list.dart';
 import 'package:flutter/material.dart';
 
 class PlayersComponent extends StatefulWidget {

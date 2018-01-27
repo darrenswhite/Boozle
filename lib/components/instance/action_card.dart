@@ -1,5 +1,5 @@
 import 'package:boozle/components/instance/action.dart';
-import 'package:boozle/components/players/player.dart';
+import 'package:boozle/components/player/player.dart';
 import 'package:flutter/material.dart';
 
 class ActionCard extends StatelessWidget {

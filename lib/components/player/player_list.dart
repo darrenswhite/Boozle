@@ -1,7 +1,7 @@
 import 'dart:collection';
 
-import 'package:boozle/components/players/player.dart';
-import 'package:boozle/components/players/player_card.dart';
+import 'package:boozle/components/player/player.dart';
+import 'package:boozle/components/player/player_card.dart';
 import 'package:flutter/material.dart';
 
 class PlayerList extends ListBase<Player> {

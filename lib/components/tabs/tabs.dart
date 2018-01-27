@@ -1,6 +1,6 @@
 import 'package:boozle/components/instance/game_component.dart';
-import 'package:boozle/components/players/player_list.dart';
-import 'package:boozle/components/players/players_component.dart';
+import 'package:boozle/components/player/player_list.dart';
+import 'package:boozle/components/player/players_component.dart';
 import 'package:boozle/components/settings/settings_component.dart';
 import 'package:flutter/material.dart';
 

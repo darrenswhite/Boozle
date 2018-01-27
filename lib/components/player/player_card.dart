@@ -1,5 +1,5 @@
-import 'package:boozle/components/players/player.dart';
-import 'package:boozle/components/players/player_list.dart';
+import 'package:boozle/components/player/player.dart';
+import 'package:boozle/components/player/player_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_color_picker/flutter_color_picker.dart';
 
