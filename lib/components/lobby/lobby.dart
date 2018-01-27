@@ -15,7 +15,7 @@ import 'package:logging/logging.dart';
 const String kHashAlphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
 const int kMinHashLength = 4;
 
-Hashids _hash = new Hashids(
+final Hashids _hash = new Hashids(
   alphabet: kHashAlphabet,
   minHashLength: kMinHashLength,
 );
@@ -161,6 +161,8 @@ class _LobbyComponentState extends State<LobbyComponent>
         _formKey.currentState.save();
         setState(() => _disabled = false);
         _navigateTabs(_instanceHash);
+      } else {
+        log.warning('Validation failed');
       }
     } finally {
       setState(() => _disabled = false);
@@ -183,13 +185,20 @@ class _LobbyComponentState extends State<LobbyComponent>
         final List<dynamic> instances = new List.from(data.value ?? []);
         int index = instances.indexOf(null);
 
+        log.fine('Total number of instances: ${instances.length}');
+
         if (index == -1) {
           index = instances.length;
         } else {
           instances.removeAt(index);
         }
 
+        log.fine('Adding new instance at: $index');
+
         hash = _hash.encode([index]);
+
+        log.fine('New instance hash: $hash');
+
         instances.insert(index, {'hash': hash});
 
         data.value = instances;
@@ -198,8 +207,10 @@ class _LobbyComponentState extends State<LobbyComponent>
       });
 
       if (transactionResult.committed) {
+        log.info('New instance successfully created: $hash');
         _navigateTabs(hash);
       } else {
+        log.warning('Failed to create new instance: $hash');
         _scaffoldKey.currentState.showSnackBar(new SnackBar(
           content: new Text('Unable to create new instance'),
         ));
@@ -213,8 +224,11 @@ class _LobbyComponentState extends State<LobbyComponent>
   }
 
   String _validateInstanceHash(String hash) {
-    return hash != null && _instances.any((i) => i.hash == hash)
-        ? null
-        : 'Instance does not exist';
+    if (hash != null && _instances.any((i) => i.hash == hash)) {
+      return null;
+    } else {
+      log.warning('Instance hash does not exist: $hash');
+      return 'Invalid instance code';
+    }
   }
 }
