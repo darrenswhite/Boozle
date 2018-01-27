@@ -36,6 +36,7 @@ class Instance {
   static final Logger log = new Logger('Instance');
 
   static const String KEY_HASH = 'hash';
+  static const String KEY_USER_NAME = 'name';
   static const String KEY_USERS = 'users';
 
   final int index;
@@ -43,9 +44,9 @@ class Instance {
   final Map<String, dynamic> users;
   final DatabaseReference ref;
 
-  void addUser(String uid) {
+  void addUser(String uid, String name) {
     log.info('Adding user to instance: $uid');
-    ref.child('$KEY_USERS/$uid').set(true);
+    ref.child('$KEY_USERS/$uid').set({KEY_USER_NAME: name});
     users[uid] = true;
   }
 

@@ -1,13 +1,21 @@
-import 'package:flutter/material.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class User {
-  const User(this.name, this.color);
+  const User({this.id, this.name});
 
+  factory User.snapshot(DataSnapshot snapshot) {
+    Map<String, dynamic> value = snapshot.value;
+    return new User(
+      id: snapshot.key,
+      name: value['name'],
+    );
+  }
+
+  final String id;
   final String name;
-  final Color color;
 
   @override
   String toString() {
-    return 'User{name: $name, color: $color}';
+    return 'User{id: $id, name: $name}';
   }
 }

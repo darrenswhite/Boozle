@@ -2,8 +2,11 @@ import 'dart:math';
 
 import 'package:boozle/components/instance/action.dart';
 import 'package:boozle/components/instance/action_card.dart';
+import 'package:boozle/components/instance/instance.dart';
 import 'package:boozle/components/user/user.dart';
 import 'package:boozle/config/application.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/ui/utils/stream_subscriber_mixin.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
@@ -18,7 +21,7 @@ class GameComponent extends StatefulWidget {
 }
 
 class _GameComponentState extends State<GameComponent>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, StreamSubscriberMixin<Event> {
   static Logger log = new Logger('_GameComponentState');
   final List<User> _users = <User>[];
   AnimationController _animation;
@@ -29,32 +32,15 @@ class _GameComponentState extends State<GameComponent>
   Widget build(BuildContext context) {
     List<Widget> stackWidgets = [];
 
-    stackWidgets.add(new Center(
-      child: new AnimatedBuilder(
-        child: _currCard,
-        animation: _cardIn,
-        builder: (BuildContext context, Widget child) {
-          return new SlideTransition(
-            position: _cardIn,
-            child: child,
-          );
-        },
-      ),
-    ));
-
-    if (_prevCard != null) {
-      stackWidgets.add(new Center(
-        child: new AnimatedBuilder(
-          child: _prevCard,
-          animation: _cardOut,
-          builder: (BuildContext context, Widget child) {
-            return new SlideTransition(
-              position: _cardOut,
-              child: child,
-            );
-          },
-        ),
-      ));
+    if (_currCard != null) {
+      stackWidgets.add(_buildAnimatedWidget(_currCard, _cardIn));
+      if (_prevCard != null) {
+        stackWidgets.add(_buildAnimatedWidget(_prevCard, _cardOut));
+      } else {
+        stackWidgets.add(_buildPlaceholder());
+      }
+    } else {
+      stackWidgets.add(_buildPlaceholder());
     }
 
     return new Scaffold(
@@ -69,9 +55,44 @@ class _GameComponentState extends State<GameComponent>
     );
   }
 
+  Widget _buildAnimatedWidget(Widget child, Animation<Offset> animation) {
+    return new Center(
+      child: new AnimatedBuilder(
+        child: child,
+        animation: animation,
+        builder: (BuildContext context, Widget child) {
+          return new SlideTransition(
+            position: animation,
+            child: child,
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildPlaceholder() {
+    return _buildAnimatedWidget(
+      new Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          new Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              new Text('Tap '),
+              new Icon(Icons.play_circle_filled),
+              new Text(' to start'),
+            ],
+          ),
+        ],
+      ),
+      _cardOut,
+    );
+  }
+
   @override
   void dispose() {
     _animation.dispose();
+    cancelSubscriptions();
     super.dispose();
   }
 
@@ -98,7 +119,14 @@ class _GameComponentState extends State<GameComponent>
       parent: _animation,
       curve: new Interval(0.0, 0.5, curve: Curves.elasticIn),
     ));
-    next();
+    DatabaseReference usersRef =
+        Instance.reference(hash: widget.instanceHash).child(Instance.KEY_USERS);
+    listen(usersRef.onChildAdded, (event) {
+      _users.add(new User.snapshot(event.snapshot));
+    });
+    listen(usersRef.onChildRemoved, (event) {
+      _users.remove(new User.snapshot(event.snapshot));
+    });
   }
 
   void next() {

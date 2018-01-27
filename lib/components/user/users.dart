@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:boozle/components/instance/instance.dart';
+import 'package:boozle/components/user/user.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
@@ -18,11 +19,12 @@ class UsersComponent extends StatelessWidget {
         query: Instance.reference(hash: instanceHash).child(Instance.KEY_USERS),
         itemBuilder: (BuildContext context, DataSnapshot snapshot,
             Animation<double> animation, int index) {
+          final User user = new User.snapshot(snapshot);
           return new SizeTransition(
             sizeFactor: animation,
             child: new Card(
               child: new ListTile(
-                title: new Text(snapshot.key.toString()),
+                title: new Text(user.name),
               ),
             ),
           );
