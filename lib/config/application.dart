@@ -22,15 +22,5 @@ class Application {
       description: 'This action doesn\'t affect any user',
       affectsUser: false,
     ),
-    const Action(
-      name: 'Action C',
-      description: 'This action has an image',
-      image: 'images/lake.jpg',
-    ),
-    const Action(
-      name: 'Action D',
-      description: 'This action has an animated image',
-      image: 'images/nyan_cat.gif',
-    )
   ];
 }

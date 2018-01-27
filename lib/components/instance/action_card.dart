@@ -10,8 +10,7 @@ class ActionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color userColor =
-        user != null && action.affectsUser ? user.color : null;
+    Color userColor = user != null && action.affectsUser ? user.color : null;
     List<Widget> columnWidgets = [];
 
     columnWidgets.add(new ListTile(
