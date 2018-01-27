@@ -31,7 +31,7 @@ class GameComponentState extends State<GameComponent>
     setState(() {
       animateActionOut(callback: () {
         actionCard = new ActionCard(
-            widget.controller.currentAction, widget.controller.currentPlayer);
+            widget.controller.currentAction, widget.controller.currentUser);
         imageWidget = getActionImage();
         setState(() {
           animateActionIn(callback: () {
@@ -154,7 +154,7 @@ class GameComponentState extends State<GameComponent>
     super.initState();
     widget.controller.next();
     actionAnimation = actionCard = new ActionCard(
-        widget.controller.currentAction, widget.controller.currentPlayer);
+        widget.controller.currentAction, widget.controller.currentUser);
     imageAnimation = imageWidget = getActionImage();
     controller = new AnimationController(
       duration: const Duration(milliseconds: 1000),

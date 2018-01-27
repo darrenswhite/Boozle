@@ -2,8 +2,7 @@ import 'dart:math';
 
 import 'package:boozle/components/instance/action.dart';
 import 'package:boozle/components/instance/action_card.dart';
-import 'package:boozle/components/player/player.dart';
-import 'package:boozle/components/player/player_list.dart';
+import 'package:boozle/components/user/user.dart';
 import 'package:boozle/config/application.dart';
 
 class ActionController {
@@ -11,19 +10,17 @@ class ActionController {
 
   final Random rnd = new Random();
   final String instanceHash;
-  final PlayerList players = new PlayerList();
+  final List<User> users = <User>[];
 
   Action currentAction;
   ActionCard currentActionCard;
-
-  Player currentPlayer;
+  User currentUser;
 
   void next() {
     currentAction = Application
         .ACTION_MODELS[rnd.nextInt(Application.ACTION_MODELS.length)];
-    currentPlayer =
-        players.length > 0 ? players[rnd.nextInt(players.length)] : null;
+    currentUser = users.length > 0 ? users[rnd.nextInt(users.length)] : null;
 
-    currentActionCard = new ActionCard(currentAction, currentPlayer);
+    currentActionCard = new ActionCard(currentAction, currentUser);
   }
 }

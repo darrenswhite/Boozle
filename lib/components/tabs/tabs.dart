@@ -2,9 +2,8 @@ import 'dart:async';
 
 import 'package:boozle/components/instance/game_component.dart';
 import 'package:boozle/components/instance/instance.dart';
-import 'package:boozle/components/player/player_list.dart';
-import 'package:boozle/components/player/players_component.dart';
 import 'package:boozle/components/settings/settings_component.dart';
+import 'package:boozle/components/user/users.dart';
 import 'package:boozle/config/auth.dart';
 import 'package:flutter/material.dart';
 
@@ -19,17 +18,14 @@ class TabsComponent extends StatefulWidget {
 
 class _TabsComponentState extends State<TabsComponent>
     with SingleTickerProviderStateMixin {
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   Map<Tab, Widget> tabs;
   TabController tabController;
-  PlayerList players;
 
   @override
   Widget build(BuildContext context) {
     return new WillPopScope(
       onWillPop: _leaveInstance,
       child: new Scaffold(
-        key: _scaffoldKey,
         appBar: new AppBar(
           elevation:
               Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
@@ -56,14 +52,13 @@ class _TabsComponentState extends State<TabsComponent>
   @override
   void initState() {
     super.initState();
-    players = new PlayerList();
     tabs = {
       new Tab(icon: const Icon(Icons.settings)):
           new SettingsComponent(widget.instanceHash),
       new Tab(icon: const Icon(Icons.gamepad)):
           new GameComponent(widget.instanceHash),
       new Tab(icon: const Icon(Icons.people)):
-          new PlayersComponent(widget.instanceHash),
+          new UsersComponent(widget.instanceHash),
     };
     tabController = new TabController(
       initialIndex: 1,

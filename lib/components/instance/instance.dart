@@ -17,30 +17,34 @@ final Hashids _hash = new Hashids(
 );
 
 class Instance {
-  const Instance({
+  Instance({
     this.index,
     this.hash,
     this.users,
-  });
+  }) : ref = reference(index: index);
 
   factory Instance.snapshot(DataSnapshot snapshot) {
     Map<String, dynamic> value = snapshot.value;
     return new Instance(
       index: int.parse(snapshot.key),
-      hash: value['hash'],
-      users: value['users'] ?? {},
+      hash: value[KEY_HASH],
+      users: value[KEY_USERS] ?? {},
     );
   }
 
   static final Logger log = new Logger('Instance');
 
+  static const String KEY_HASH = 'hash';
+  static const String KEY_USERS = 'users';
+
   final int index;
   final String hash;
   final Map<String, dynamic> users;
+  final DatabaseReference ref;
 
   void addPlayer(String uid) {
     log.info('Adding user to instance: $uid');
-    Database.instancesRef.child('$index/users/$uid').set(true);
+    ref.child('$KEY_USERS/$uid').set(true);
     users[uid] = true;
   }
 
@@ -63,10 +67,10 @@ class Instance {
   Future<bool> removePlayer(BuildContext context, String uid) async {
     if (users.length > 1 || await _showRemovePlayerDialog(context)) {
       log.info('Removing user from instance: $uid');
-      Database.instancesRef.child('$index/users/$uid').set(null);
+      ref.child('$KEY_USERS/$uid').set(null);
       users.remove(uid);
       if (users.isEmpty) {
-        Database.instancesRef.child(index.toString()).set(null);
+        ref.set(null);
       }
       return true;
     } else {

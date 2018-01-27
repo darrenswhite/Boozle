@@ -1,12 +1,12 @@
 import 'package:boozle/components/instance/action.dart';
-import 'package:boozle/components/player/player.dart';
+import 'package:boozle/components/user/user.dart';
 import 'package:flutter/material.dart';
 
 class ActionCard extends StatelessWidget {
   ActionCard(this.action, this.player, {Key key}) : super(key: key);
 
   final Action action;
-  final Player player;
+  final User player;
 
   @override
   Widget build(BuildContext context) {
