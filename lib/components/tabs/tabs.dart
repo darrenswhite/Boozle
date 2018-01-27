@@ -1,11 +1,15 @@
+import 'dart:async';
+
 import 'package:boozle/components/instance/game_component.dart';
+import 'package:boozle/components/instance/instance.dart';
 import 'package:boozle/components/player/player_list.dart';
 import 'package:boozle/components/player/players_component.dart';
 import 'package:boozle/components/settings/settings_component.dart';
+import 'package:boozle/config/auth.dart';
 import 'package:flutter/material.dart';
 
 class TabsComponent extends StatefulWidget {
-  const TabsComponent(this.instanceHash);
+  TabsComponent(this.instanceHash);
 
   final String instanceHash;
 
@@ -21,17 +25,21 @@ class _TabsComponentState extends State<TabsComponent>
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
-        title: new TabBar(
-          controller: tabController,
-          tabs: tabs.keys.toList(),
+    return new WillPopScope(
+      onWillPop: _leaveInstance,
+      child: new Scaffold(
+        appBar: new AppBar(
+          elevation:
+              Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
+          title: new TabBar(
+            controller: tabController,
+            tabs: tabs.keys.toList(),
+          ),
         ),
-      ),
-      body: new TabBarView(
-        children: tabs.values.toList(),
-        controller: tabController,
+        body: new TabBarView(
+          children: tabs.values.toList(),
+          controller: tabController,
+        ),
       ),
     );
   }
@@ -47,14 +55,23 @@ class _TabsComponentState extends State<TabsComponent>
     super.initState();
     players = new PlayerList();
     tabs = {
-      new Tab(icon: const Icon(Icons.settings)): new SettingsComponent(),
-      new Tab(icon: const Icon(Icons.gamepad)): new GameComponent(players),
-      new Tab(icon: const Icon(Icons.people)): new PlayersComponent(players),
+      new Tab(icon: const Icon(Icons.settings)):
+          new SettingsComponent(widget.instanceHash),
+      new Tab(icon: const Icon(Icons.gamepad)):
+          new GameComponent(widget.instanceHash),
+      new Tab(icon: const Icon(Icons.people)):
+          new PlayersComponent(widget.instanceHash),
     };
     tabController = new TabController(
       initialIndex: 1,
       length: tabs.length,
       vsync: this,
     );
+  }
+
+  Future<bool> _leaveInstance() async {
+    final Instance instance =
+        await Instance.fromDatabase(hash: widget.instanceHash);
+    return instance.removePlayer(context, Auth.firebaseUser.uid);
   }
 }

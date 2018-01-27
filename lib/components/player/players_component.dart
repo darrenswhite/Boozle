@@ -5,10 +5,11 @@ import 'package:boozle/components/player/player_list.dart';
 import 'package:flutter/material.dart';
 
 class PlayersComponent extends StatefulWidget {
-  PlayersComponent(this.players, {Key key}) : super(key: key);
+  PlayersComponent(this.instanceHash);
 
   final Random rnd = new Random();
-  final PlayerList players;
+  final String instanceHash;
+  final PlayerList players = new PlayerList();
 
   @override
   State<StatefulWidget> createState() => new PlayersComponentState();

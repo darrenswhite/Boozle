@@ -12,9 +12,6 @@ class ActionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     Color playerColor =
         player != null && action.affectsPlayer ? player.color : null;
-    Color cardColor = action.image != null
-        ? Theme.of(context).primaryColor.withOpacity(0.75)
-        : null;
     List<Widget> columnWidgets = [];
 
     columnWidgets.add(new ListTile(
@@ -53,7 +50,6 @@ class ActionCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: columnWidgets,
       ),
-      color: cardColor,
     );
   }
 }

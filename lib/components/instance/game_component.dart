@@ -1,16 +1,14 @@
 import 'package:boozle/components/instance/action.dart';
 import 'package:boozle/components/instance/action_card.dart';
 import 'package:boozle/components/instance/action_controller.dart';
-import 'package:boozle/components/player/player_list.dart';
 import 'package:flutter/material.dart';
 
 class GameComponent extends StatefulWidget {
-  GameComponent(this.players, {Key key})
-      : controller = new ActionController(players),
-        super(key: key);
+  GameComponent(this.instanceHash)
+      : controller = new ActionController(instanceHash);
 
+  final String instanceHash;
   final ActionController controller;
-  final PlayerList players;
 
   @override
   GameComponentState createState() => new GameComponentState();

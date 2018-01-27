@@ -7,10 +7,11 @@ import 'package:boozle/components/player/player_list.dart';
 import 'package:boozle/config/application.dart';
 
 class ActionController {
-  ActionController(this.players);
+  ActionController(this.instanceHash);
 
   final Random rnd = new Random();
-  final PlayerList players;
+  final String instanceHash;
+  final PlayerList players = new PlayerList();
 
   Action currentAction;
   ActionCard currentActionCard;
