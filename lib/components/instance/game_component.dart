@@ -13,10 +13,10 @@ class GameComponent extends StatefulWidget {
   final String instanceHash;
 
   @override
-  GameComponentState createState() => new GameComponentState();
+  _GameComponentState createState() => new _GameComponentState();
 }
 
-class GameComponentState extends State<GameComponent>
+class _GameComponentState extends State<GameComponent>
     with SingleTickerProviderStateMixin {
   AnimationController controller;
   Widget actionAnimation;
