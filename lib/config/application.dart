@@ -19,8 +19,8 @@ class Application {
     ),
     const Action(
       name: 'Action B',
-      description: 'This action doesn\'t affect any player',
-      affectsPlayer: false,
+      description: 'This action doesn\'t affect any user',
+      affectsUser: false,
     ),
     const Action(
       name: 'Action C',

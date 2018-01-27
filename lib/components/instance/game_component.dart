@@ -1,14 +1,16 @@
+import 'dart:math';
+
 import 'package:boozle/components/instance/action.dart';
 import 'package:boozle/components/instance/action_card.dart';
-import 'package:boozle/components/instance/action_controller.dart';
+import 'package:boozle/components/user/user.dart';
+import 'package:boozle/config/application.dart';
 import 'package:flutter/material.dart';
 
 class GameComponent extends StatefulWidget {
-  GameComponent(this.instanceHash)
-      : controller = new ActionController(instanceHash);
+  GameComponent(this.instanceHash);
 
+  final Random rnd = new Random();
   final String instanceHash;
-  final ActionController controller;
 
   @override
   GameComponentState createState() => new GameComponentState();
@@ -25,13 +27,27 @@ class GameComponentState extends State<GameComponent>
   String prevImage;
   bool diffImage = false;
 
+  final List<User> users = <User>[];
+
+  Action currentAction;
+  ActionCard currentActionCard;
+  User currentUser;
+
+  void next() {
+    currentAction = Application
+        .ACTION_MODELS[widget.rnd.nextInt(Application.ACTION_MODELS.length)];
+    currentUser =
+        users.length > 0 ? users[widget.rnd.nextInt(users.length)] : null;
+
+    currentActionCard = new ActionCard(currentAction, currentUser);
+  }
+
   void animateAction() {
-    widget.controller.next();
+    next();
 
     setState(() {
       animateActionOut(callback: () {
-        actionCard = new ActionCard(
-            widget.controller.currentAction, widget.controller.currentUser);
+        actionCard = new ActionCard(currentAction, currentUser);
         imageWidget = getActionImage();
         setState(() {
           animateActionIn(callback: () {
@@ -134,12 +150,12 @@ class GameComponentState extends State<GameComponent>
   DecoratedBox getActionImage() {
     Widget image;
 
-    if (widget.controller.currentAction.image != null) {
+    if (currentAction.image != null) {
       image = new DecoratedBox(
         child: new Container(),
         decoration: new BoxDecoration(
           image: new DecorationImage(
-            image: new AssetImage(widget.controller.currentAction.image),
+            image: new AssetImage(currentAction.image),
             fit: BoxFit.cover,
           ),
         ),
@@ -152,9 +168,8 @@ class GameComponentState extends State<GameComponent>
   @override
   void initState() {
     super.initState();
-    widget.controller.next();
-    actionAnimation = actionCard = new ActionCard(
-        widget.controller.currentAction, widget.controller.currentUser);
+    next();
+    actionAnimation = actionCard = new ActionCard(currentAction, currentUser);
     imageAnimation = imageWidget = getActionImage();
     controller = new AnimationController(
       duration: const Duration(milliseconds: 1000),

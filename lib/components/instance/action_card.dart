@@ -3,15 +3,15 @@ import 'package:boozle/components/user/user.dart';
 import 'package:flutter/material.dart';
 
 class ActionCard extends StatelessWidget {
-  ActionCard(this.action, this.player, {Key key}) : super(key: key);
+  ActionCard(this.action, this.user);
 
   final Action action;
-  final User player;
+  final User user;
 
   @override
   Widget build(BuildContext context) {
-    Color playerColor =
-        player != null && action.affectsPlayer ? player.color : null;
+    Color userColor =
+        user != null && action.affectsUser ? user.color : null;
     List<Widget> columnWidgets = [];
 
     columnWidgets.add(new ListTile(
@@ -19,19 +19,19 @@ class ActionCard extends StatelessWidget {
           style: new TextStyle(fontWeight: FontWeight.w500)),
       leading: new Icon(
         Icons.arrow_forward,
-        color: playerColor,
+        color: userColor,
       ),
     ));
 
     columnWidgets.add(new Divider());
 
-    if (player != null && action.affectsPlayer) {
+    if (user != null && action.affectsUser) {
       columnWidgets.add(new ListTile(
-        title: new Text(player.name,
+        title: new Text(user.name,
             style: new TextStyle(fontWeight: FontWeight.w500)),
         leading: new Icon(
           Icons.contacts,
-          color: playerColor,
+          color: userColor,
         ),
       ));
     }
@@ -40,7 +40,7 @@ class ActionCard extends StatelessWidget {
       title: new Text(action.description),
       leading: new Icon(
         Icons.description,
-        color: playerColor,
+        color: userColor,
       ),
     ));
 

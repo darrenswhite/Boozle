@@ -21,7 +21,8 @@ class Instance {
     this.index,
     this.hash,
     this.users,
-  }) : ref = reference(index: index);
+  })
+      : ref = reference(index: index);
 
   factory Instance.snapshot(DataSnapshot snapshot) {
     Map<String, dynamic> value = snapshot.value;
@@ -42,7 +43,7 @@ class Instance {
   final Map<String, dynamic> users;
   final DatabaseReference ref;
 
-  void addPlayer(String uid) {
+  void addUser(String uid) {
     log.info('Adding user to instance: $uid');
     ref.child('$KEY_USERS/$uid').set(true);
     users[uid] = true;
@@ -62,10 +63,10 @@ class Instance {
     return Database.instancesRef.child(index.toString());
   }
 
-  /// Removes a player. If removing the last player will show an alert dialog
-  /// for confirmation. Removing the last player will remove the instance.
-  Future<bool> removePlayer(BuildContext context, String uid) async {
-    if (users.length > 1 || await _showRemovePlayerDialog(context)) {
+  /// Removes a user. If removing the last user will show an alert dialog
+  /// for confirmation. Removing the last user will remove the instance.
+  Future<bool> removeUser(BuildContext context, String uid) async {
+    if (users.length > 1 || await _showRemoveUserDialog(context)) {
       log.info('Removing user from instance: $uid');
       ref.child('$KEY_USERS/$uid').set(null);
       users.remove(uid);
@@ -78,13 +79,13 @@ class Instance {
     }
   }
 
-  Future<bool> _showRemovePlayerDialog(BuildContext context) {
-    log.info('Showing remove player alert dialog');
+  Future<bool> _showRemoveUserDialog(BuildContext context) {
+    log.info('Showing remove user alert dialog');
     return showDialog<bool>(
           context: context,
           child: new AlertDialog(
             title: const Text('Are you sure you want to leave?'),
-            content: const Text('You are the only player in this instance. '
+            content: const Text('You are the only user in this instance. '
                 'Leaving will remove the instance. '
                 'Really leave this instance?'),
             actions: <Widget>[

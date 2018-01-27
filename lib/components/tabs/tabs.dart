@@ -70,6 +70,6 @@ class _TabsComponentState extends State<TabsComponent>
   Future<bool> _leaveInstance() async {
     final Instance instance =
         await Instance.fromDatabase(hash: widget.instanceHash);
-    return instance.removePlayer(context, Auth.firebaseUser.uid);
+    return instance.removeUser(context, Auth.firebaseUser.uid);
   }
 }

@@ -4,11 +4,11 @@ class Action {
   const Action(
       {@required this.name,
       @required this.description,
-      this.affectsPlayer = true,
+      this.affectsUser = true,
       this.image});
 
   final String name;
   final String description;
-  final bool affectsPlayer;
+  final bool affectsUser;
   final String image;
 }

@@ -160,7 +160,7 @@ class _LobbyComponentState extends State<LobbyComponent>
   }
 
   Future<Null> _navigateTabs(Instance instance) async {
-    instance.addPlayer(Auth.firebaseUser.uid);
+    instance.addUser(Auth.firebaseUser.uid);
     instance.view(context);
   }
 
