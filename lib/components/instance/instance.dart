@@ -45,7 +45,7 @@ class Instance {
   final DatabaseReference ref;
 
   void addUser(String uid, String name) {
-    log.info('Adding user to instance: $uid');
+    log.info('Adding user to instance: $uid ($name)');
     ref.child('$KEY_USERS/$uid').set({KEY_USER_NAME: name});
     users[uid] = true;
   }

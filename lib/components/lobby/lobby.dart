@@ -23,7 +23,9 @@ class _LobbyComponentState extends State<LobbyComponent>
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   final List<Instance> _instances = <Instance>[];
   bool _disabled = false;
+  bool _instanceValidation = true;
   String _instanceHash;
+  String _name;
 
   @override
   Widget build(BuildContext context) {
@@ -80,6 +82,14 @@ class _LobbyComponentState extends State<LobbyComponent>
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: new Wrap(
           children: <Widget>[
+            new TextFormField(
+              decoration: const InputDecoration(
+                icon: const Icon(Icons.info),
+                labelText: 'Name',
+              ),
+              onSaved: (value) => _name = value,
+              validator: _validateName,
+            ),
             new TextFormField(
               decoration: const InputDecoration(
                 icon: const Icon(Icons.code),
@@ -160,7 +170,7 @@ class _LobbyComponentState extends State<LobbyComponent>
   }
 
   Future<Null> _navigateTabs(Instance instance) async {
-    instance.addUser(Auth.firebaseUser.uid, 'Darren');
+    instance.addUser(Auth.firebaseUser.uid, _name);
     instance.view(context);
   }
 
@@ -169,27 +179,41 @@ class _LobbyComponentState extends State<LobbyComponent>
   Future<Null> _new() async {
     try {
       setState(() => _disabled = true);
-
-      final Instance instance = await Instance.transaction();
-
-      if (instance != null) {
-        _navigateTabs(instance);
-      } else {
-        _scaffoldKey.currentState.showSnackBar(new SnackBar(
-          content: new Text('Unable to create new instance'),
-        ));
+      log.info('Validating form');
+      _instanceValidation = false;
+      if (_formKey.currentState.validate()) {
+        log.info('Saving form');
+        _formKey.currentState.save();
+        final Instance instance = await Instance.transaction();
+        if (instance != null) {
+          _navigateTabs(instance);
+        } else {
+          _scaffoldKey.currentState.showSnackBar(new SnackBar(
+            content: new Text('Unable to create new instance'),
+          ));
+        }
       }
     } finally {
       setState(() => _disabled = false);
+      _instanceValidation = true;
     }
   }
 
   String _validateInstanceHash(String hash) {
-    if (hash != null && _instances.any((i) => i.hash == hash)) {
+    if (!_instanceValidation ||
+        hash != null && _instances.any((i) => i.hash == hash)) {
       return null;
     } else {
       log.warning('Instance hash does not exist: $hash');
       return 'Invalid instance code';
+    }
+  }
+
+  String _validateName(String name) {
+    if (name != null && name.isNotEmpty) {
+      return null;
+    } else {
+      return 'Invalid name';
     }
   }
 }
