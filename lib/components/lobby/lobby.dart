@@ -23,7 +23,7 @@ class _LobbyComponentState extends State<LobbyComponent>
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   final List<Instance> _instances = <Instance>[];
   bool _disabled = false;
-  Instance _instance;
+  String _instanceHash;
 
   @override
   Widget build(BuildContext context) {
@@ -92,8 +92,7 @@ class _LobbyComponentState extends State<LobbyComponent>
                 new WhitelistingTextInputFormatter(
                     new RegExp('[$kHashAlphabet]')),
               ],
-              onSaved: (value) async =>
-                  _instance = await Instance.fromDatabase(hash: value),
+              onSaved: (value) => _instanceHash = value,
               validator: _validateInstanceHash,
             ),
             new Container(
@@ -143,7 +142,7 @@ class _LobbyComponentState extends State<LobbyComponent>
     );
   }
 
-  void _join() {
+  Future<Null> _join() async {
     try {
       setState(() => _disabled = true);
       log.info('Validating form');
@@ -151,7 +150,7 @@ class _LobbyComponentState extends State<LobbyComponent>
         log.info('Saving form');
         _formKey.currentState.save();
         setState(() => _disabled = false);
-        _navigateTabs(_instance);
+        _navigateTabs(await Instance.fromDatabase(hash: _instanceHash));
       } else {
         log.warning('Validation failed');
       }
