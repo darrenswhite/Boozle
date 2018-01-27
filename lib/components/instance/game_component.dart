@@ -1,9 +1,11 @@
 import 'dart:math';
 
 import 'package:boozle/components/instance/action.dart';
+import 'package:boozle/components/instance/action_card.dart';
 import 'package:boozle/components/user/user.dart';
 import 'package:boozle/config/application.dart';
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 
 class GameComponent extends StatefulWidget {
   GameComponent(this.instanceHash);
@@ -17,96 +19,50 @@ class GameComponent extends StatefulWidget {
 
 class _GameComponentState extends State<GameComponent>
     with SingleTickerProviderStateMixin {
-  final List<User> users = <User>[];
-  AnimationController controller;
-  Widget actionAnimation;
-
-  Action currAction, prevAction;
-  User currUser, prevUser;
-
-  void animateAction() {
-    next();
-
-    setState(() {
-      animateActionOut(callback: () {
-        setState(() {
-          animateActionIn();
-        });
-      });
-    });
-  }
-
-  void animateActionIn({dynamic callback()}) {
-    actionAnimation = new SlideTransition(
-      position: new Tween<Offset>(
-        begin: const Offset(-1.0, 0.0),
-        end: Offset.zero,
-      )
-          .animate(new CurvedAnimation(
-        parent: controller,
-        curve: Curves.elasticOut,
-      )),
-      child: currAction.buildCard(currUser),
-    );
-
-    if (callback == null) {
-      controller.forward(from: 0.0);
-    } else {
-      controller.forward(from: 0.0).whenComplete(callback);
-    }
-  }
-
-  void animateActionOut({dynamic callback()}) {
-    if (prevAction == null) {
-      if (callback != null) {
-        callback();
-      }
-      return;
-    }
-
-    actionAnimation = new SlideTransition(
-      position: new Tween<Offset>(
-        begin: Offset.zero,
-        end: const Offset(1.0, 0.0),
-      )
-          .animate(new CurvedAnimation(
-        parent: controller,
-        curve: Curves.elasticIn,
-      )),
-      child: prevAction.buildCard(prevUser),
-    );
-
-    if (callback == null) {
-      controller.forward(from: 0.0);
-    } else {
-      controller.forward(from: 0.0).whenComplete(callback);
-    }
-  }
-
-  void next() {
-    prevAction = currAction;
-    prevUser = currUser;
-
-    currAction = Application
-        .ACTION_MODELS[widget.rnd.nextInt(Application.ACTION_MODELS.length)];
-    currUser =
-        users.length > 0 ? users[widget.rnd.nextInt(users.length)] : null;
-  }
+  static Logger log = new Logger('_GameComponentState');
+  final List<User> _users = <User>[];
+  AnimationController _animation;
+  ActionCard _currCard, _prevCard;
+  Animation<Offset> _cardIn, _cardOut;
 
   @override
   Widget build(BuildContext context) {
     List<Widget> stackWidgets = [];
 
     stackWidgets.add(new Center(
-      child: actionAnimation,
+      child: new AnimatedBuilder(
+        child: _currCard,
+        animation: _cardIn,
+        builder: (BuildContext context, Widget child) {
+          return new SlideTransition(
+            position: _cardIn,
+            child: child,
+          );
+        },
+      ),
     ));
+
+    if (_prevCard != null) {
+      stackWidgets.add(new Center(
+        child: new AnimatedBuilder(
+          child: _prevCard,
+          animation: _cardOut,
+          builder: (BuildContext context, Widget child) {
+            return new SlideTransition(
+              position: _cardOut,
+              child: child,
+            );
+          },
+        ),
+      ));
+    }
 
     return new Scaffold(
       body: new Stack(
         children: stackWidgets,
       ),
       floatingActionButton: new FloatingActionButton(
-        onPressed: animateAction,
+        onPressed: next,
         tooltip: 'Continue',
         child: const Icon(Icons.play_arrow),
       ),
@@ -115,17 +71,50 @@ class _GameComponentState extends State<GameComponent>
 
   @override
   void dispose() {
-    controller.dispose();
+    _animation.dispose();
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
-    controller = new AnimationController(
-      duration: const Duration(milliseconds: 1000),
+    _animation = new AnimationController(
+      duration: const Duration(milliseconds: 2000),
       vsync: this,
     );
-    animateAction();
+    _cardIn = new Tween<Offset>(
+      begin: const Offset(-1.0, 0.0),
+      end: Offset.zero,
+    )
+        .animate(new CurvedAnimation(
+      parent: _animation,
+      curve: new Interval(0.5, 1.0, curve: Curves.elasticOut),
+    ));
+    _cardOut = new Tween<Offset>(
+      begin: Offset.zero,
+      end: const Offset(1.0, 0.0),
+    )
+        .animate(new CurvedAnimation(
+      parent: _animation,
+      curve: new Interval(0.0, 0.5, curve: Curves.elasticIn),
+    ));
+    next();
+  }
+
+  void next() {
+    final Action nextAction = Application
+        .ACTION_MODELS[widget.rnd.nextInt(Application.ACTION_MODELS.length)];
+    final User nextUser =
+        _users.length > 0 ? _users[widget.rnd.nextInt(_users.length)] : null;
+
+    log.info('Next action: $nextAction');
+    log.info('Next user: $nextUser');
+
+    _prevCard = _currCard;
+    _currCard = new ActionCard(nextAction, nextUser);
+
+    setState(() {
+      _animation.forward(from: 0.0);
+    });
   }
 }

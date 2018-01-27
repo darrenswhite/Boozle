@@ -5,4 +5,9 @@ class User {
 
   final String name;
   final Color color;
+
+  @override
+  String toString() {
+    return 'User{name: $name, color: $color}';
+  }
 }
